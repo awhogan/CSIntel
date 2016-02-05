@@ -345,7 +345,7 @@ class CSIntelAPI:
         fullQuery = self.host + query #host part doesn't change
 
         #debug
-        print "fullQuery: " + fullQuery
+        #print "fullQuery: " + fullQuery
 
         headers = self.getHeaders() #format the API key & ID
         
@@ -664,10 +664,10 @@ class CSIntelAPI:
         result = self.request(query)
 
         #debug
-        print "query:"
-        print query
-        print "result:"
-        print result
+        #print "query:"
+        #print query
+        #print "result:"
+        #print result
 
         return result
     #end SearchTarget()
