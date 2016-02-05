@@ -9,7 +9,7 @@ it into another script.
 
 Example 1: 
     
-    `$> ./CSIntel.py --custid ABC --custkey DEF --day --indicators`
+    $> ./CSIntel.py --custid ABC --custkey DEF --day --indicators
 
 Example 2:
 
@@ -18,8 +18,9 @@ Example 2:
     api_obj = CSIntel.CSIntelAPI(custid, custkey)
     results = api_obj.SearchLastWeek()
 
-To learn more about the functions you can use when importing this file see the included python
-documentation:
+To learn more about the functions you can use when importing this file see the included python documentation:
+
+
     $> pydoc ./CSIntel.py
 
 You can also see the examples included within for the simple functions that are used to enable
@@ -27,44 +28,42 @@ the CLI commands.
 
 The command line usage is shown below:
 
--------------------------------------------------------------------------------------------------------
-usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
-                  [--config CONFIG]
-                  (--actor ACTOR | --actors ACTORS | --ip IP | --indicator INDICATOR | --day | --week)
-                  [--out {all,indicators,hashes,domains,ips,actors,reports}]
-                  [--related]
+> usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
+>                   [--config CONFIG]
+>                   (--actor ACTOR | --actors ACTORS | --ip IP | --indicator INDICATOR | --day | --week)
+>                   [--out {all,indicators,hashes,domains,ips,actors,reports}]
+>                   [--related]
+> 
+> CS Intel API
+> 
+> optional arguments:
+>   -h, --help            show this help message and exit
+>   --custid CUSTID, -i CUSTID
+>                         API Customer ID
+>   --custkey CUSTKEY, -k CUSTKEY
+>                         API Customer Key
+>   --write, -w           Write the API config to the file specified by the
+>                         --config option
+>   --config CONFIG, -c CONFIG
+>                         Configuration File Name
+>   --actor ACTOR, -a ACTOR
+>                         Search for an actor by name
+>   --actors ACTORS, -s ACTORS
+>                         Search for a actors by pattern
+>   --ip IP, -p IP        Search for an IP address
+>   --domain DOMAIN, -d DOMAIN
+>                         Search for a domain
+>   --report REPORT, -r REPORT
+>                         Search for a report
+>   --indicator INDICATOR, -n INDICATOR
+>                         Search for an indicator
+>   --day                 Get all indicators that have changed in 24 hours
+>   --week                Get all indicators that have changed in the past week
+>   --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
+>                         What should I print? Default: all
+>   --related             Include related indicators.
 
-CS Intel API
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --custid CUSTID, -i CUSTID
-                        API Customer ID
-  --custkey CUSTKEY, -k CUSTKEY
-                        API Customer Key
-  --write, -w           Write the API config to the file specified by the
-                        --config option
-  --config CONFIG, -c CONFIG
-                        Configuration File Name
-  --actor ACTOR, -a ACTOR
-                        Search for an actor by name
-  --actors ACTORS, -s ACTORS
-                        Search for a actors by pattern
-  --ip IP, -p IP        Search for an IP address
-  --domain DOMAIN, -d DOMAIN
-                        Search for a domain
-  --report REPORT, -r REPORT
-                        Search for a report
-  --indicator INDICATOR, -n INDICATOR
-                        Search for an indicator
-  --day                 Get all indicators that have changed in 24 hours
-  --week                Get all indicators that have changed in the past week
-  --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
-                        What should I print? Default: all
-  --related             Include related indicators.
--------------------------------------------------------------------------------------------------------
-
-Using from the Command Line
+## Using from the Command Line
 -------
 
 The first step to using this from the Command Line is to make sure you're passing your Customer ID
