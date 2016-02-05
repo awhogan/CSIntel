@@ -921,6 +921,7 @@ if __name__ == "__main__":
     parser.add_argument( '--custkey', '-k', type=str, help="API Customer Key", default=None)
     parser.add_argument( '--write', '-w', action='store_true', default=False, help='Write the API config to the file specified by the --config option')
     parser.add_argument( '--config', '-c', type=str, help="Configuration File Name", default=defaultConfigFileName)
+    parser.add_argument( '--debug', '-b', action='store_true', default=False, help='Turn on some debug strings')
 
     #Error management is easier by specificying a group for the commands that can be used.
     #Each of these are actions/searches the script can take.
@@ -959,7 +960,7 @@ if __name__ == "__main__":
         (custid, custkey) = readConfig( args.config )
 
     #Create the API object 
-    api_obj = CSIntelAPI(custid, custkey)
+    api_obj = CSIntelAPI(custid, custkey, args.debug)
 
     # Check to see if config in memory should be written to disk
     if args.write:
