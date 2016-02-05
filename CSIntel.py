@@ -355,6 +355,20 @@ class CSIntelAPI:
         #use requests library to pull request
         r = requests.get( fullQuery, headers=headers ) 
 
+        #Error handling for HTTP request
+
+        # 400 - bad request
+        if r.status_code == 400:
+            raise Exception('HTTP Error 400 - Bad request.')
+
+        # 404 - oh shit
+        if r.status_code == 404:
+            raise Exception('HTTP Error 404 - awww snap.')
+
+        # catch all?
+        if r.status_code != 200:
+            raise Exception('HTTP Error: ' + str(r.status_code) )
+
         return r
     #end request()
 
