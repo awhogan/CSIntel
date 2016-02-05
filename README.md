@@ -114,10 +114,12 @@ Examples
 ==========
 
 Tell me about Rocket Kitten.
+
     >./CSIntel.py --actor rocketkitten
     ...
 
 Get all intel data that has been updated in the last 24 hours and print all indicators returned
+    
     >./CSIntel.py --day --out indicators
     hash_md5:297bea792870a2433944a1ea8bcaf196:Malware/njRAT:MaliciousConfidence/High:
     hash_md5:df12de91be850692e24dc6b9ea3f4645:Malware/njRAT:MaliciousConfidence/High:
@@ -128,23 +130,24 @@ Get all intel data that has been updated in the last 24 hours and print all indi
 
 Having found an interesting IP address, search CrowdStrike's API for it and return if any threat
 actors have been associated with it.
+
     >./CSIntel.py --ip 211.230.232.221 --out actors
     WETPANDA
 
 Search the same IP address to see if it has been discussed in any Intelligence Reports.
+
     >./CSIntel.py --ip 211.230.232.221 --out reports
     CSIR-13017
     CSIT-13051
 
 Search a specified report and print all hashes associated with it
+
     >./CSIntel.py  --report CSIR-13017 --out hashes
     f4971892bdedbff4aa0cc8c63fcf85f2c8bfe364d76769cadd70d128a372a481
     63dbabdf27f92b29597ea4fbeacb1d7fde058d8d
     391b63a12332cdb7384d4183c8693153c683ed8afd6a8933b87a1eea88cb107a
     6ce07e229a91953410ae972343d14e9d9a2afbe1
     ...
-
-
 
 -------------------------------------------------------------------------------------------------------
 written by: adam.hogan@crowdstrike.com
@@ -153,24 +156,26 @@ Change log
 =========
 
 Version 0.3
-    * Added search for report name
-    * Added documentation examples
-    * Cleaned up config write
+* Added search for report name
+* Added documentation examples
+* Cleaned up config write
+
 Version 0.2
-    * Added indicator labels option, and it's availability from the CLI
-    * Added "related" options to data methods to get indicators related to the original indicators.
-      Also available from the Command Line with the --related flag.
+* Added indicator labels option, and it's availability from the CLI
+* Added "related" options to data methods to get indicators related to the original indicators.
+Also available from the Command Line with the --related flag.
+
 Version 0.1
-    * Initial release
+* Initial release
 
 
-TODO
-    *search for malware family
-    *search for labels
-    *search for target industry
-    *search for threat type
-    *search by vulnerability
-    *input validating
-    *error control
-    *add proxy server support
+###TODO
+*search for malware family
+*search for labels
+*search for target industry
+*search for threat type
+*search by vulnerability
+*input validating
+*error control
+*add proxy server support
 -------------------------------------------------------------------------------------------------------
