@@ -631,6 +631,9 @@ class CSIntelAPI:
         Returns a string for the URL query search
         """
 
+        #good query: search/labels?match=Retail
+        #maybe       search/labels?equal=Target/Retail  ?
+
         encodedargs = ""
 
         if any(kwargs):
@@ -638,13 +641,13 @@ class CSIntelAPI:
             encodedargs = "&" + self.getURLParams(**kwargs)
 
         #build the query string
-        query = "Target?" + searchFilter + "=" + target + encodedargs
+        query = "labels?" + searchFilter + "=" + target + encodedargs
 
         return query
     #end GetTargetQuery()
 
 
-    def SearchTarget(self, target, searchFilter="equal", **kwargs):
+    def SearchTarget(self, target, searchFilter="match", **kwargs):
         """
         Search the API for a specific Target Industry.
         Pass the industry name as a string, and any other options.
