@@ -262,7 +262,7 @@ class CSIntelAPI:
     """
 
 
-    def __init__(self, custid=None, custkey=None):
+    def __init__(self, custid=None, custkey=None, debug=False):
         """
         Intit funciton for the CS Intel API object - pass it the API customer ID and
         customer key to create it. 
@@ -289,6 +289,9 @@ class CSIntelAPI:
         self.validSort = validSort
         self.validDomainType = validDomainType
         self.validTarget = validTarget
+
+        #debug?
+        self.debug = debug
 
     #end init
 
@@ -344,8 +347,8 @@ class CSIntelAPI:
 
         fullQuery = self.host + query #host part doesn't change
 
-        #debug
-        #print "fullQuery: " + fullQuery
+        if self.debug:
+            print "fullQuery: " + fullQuery
 
         headers = self.getHeaders() #format the API key & ID
         
@@ -525,8 +528,8 @@ class CSIntelAPI:
 
         query = "last_updated?" + searchFilter + "=" + str(date) + "&" + encodedargs
 
-        #debug
-        #print "query: " + query
+        if self.debug:
+            print "query: " + query
 
         return query
     #end getLastUpdatedQuery
