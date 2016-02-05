@@ -8,7 +8,7 @@ This module can be used one of two ways: by executing it directly from the comma
 it into another script. 
 
 Example 1: 
-    $> ./CSIntel.py --custid ABC --custkey DEF --day --indicators
+    `$> ./CSIntel.py --custid ABC --custkey DEF --day --indicators`
 
 Example 2:
     #!/usr/bin/python
