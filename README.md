@@ -169,7 +169,9 @@ Version 0.1
 * Initial release
 
 
-###TODO
+TODO
+====
+
 
 *search for malware family
 *search for labels
@@ -179,5 +181,6 @@ Version 0.1
 *input validating
 *error control
 *add proxy server support
+
 
 -------------------------------------------------------------------------------------------------------
