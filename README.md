@@ -9,14 +9,14 @@ it into another script.
 
 Example 1: 
     
-`$> ./CSIntel.py --custid ABC --custkey DEF --day --indicators`
+    `$> ./CSIntel.py --custid ABC --custkey DEF --day --indicators`
 
 Example 2:
 
-    `#!/usr/bin/python
+    #!/usr/bin/python
     import CSIntel
     api_obj = CSIntel.CSIntelAPI(custid, custkey)
-    results = api_obj.SearchLastWeek()`
+    results = api_obj.SearchLastWeek()
 
 To learn more about the functions you can use when importing this file see the included python
 documentation:
