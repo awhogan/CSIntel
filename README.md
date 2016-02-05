@@ -28,40 +28,40 @@ the CLI commands.
 
 The command line usage is shown below:
 
-> usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
->                   [--config CONFIG]
->                   (--actor ACTOR | --actors ACTORS | --ip IP | --indicator INDICATOR | --day | --week)
->                   [--out {all,indicators,hashes,domains,ips,actors,reports}]
->                   [--related]
-> 
-> CS Intel API
-> 
-> optional arguments:
->   -h, --help            show this help message and exit
->   --custid CUSTID, -i CUSTID
->                         API Customer ID
->   --custkey CUSTKEY, -k CUSTKEY
->                         API Customer Key
->   --write, -w           Write the API config to the file specified by the
->                         --config option
->   --config CONFIG, -c CONFIG
->                         Configuration File Name
->   --actor ACTOR, -a ACTOR
->                         Search for an actor by name
->   --actors ACTORS, -s ACTORS
->                         Search for a actors by pattern
->   --ip IP, -p IP        Search for an IP address
->   --domain DOMAIN, -d DOMAIN
->                         Search for a domain
->   --report REPORT, -r REPORT
->                         Search for a report
->   --indicator INDICATOR, -n INDICATOR
->                         Search for an indicator
->   --day                 Get all indicators that have changed in 24 hours
->   --week                Get all indicators that have changed in the past week
->   --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
->                         What should I print? Default: all
->   --related             Include related indicators.
+     usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
+                       [--config CONFIG]
+                       (--actor ACTOR | --actors ACTORS | --ip IP | --indicator INDICATOR | --day | --week)
+                       [--out {all,indicators,hashes,domains,ips,actors,reports}]
+                       [--related]
+     
+     CS Intel API
+     
+     optional arguments:
+       -h, --help            show this help message and exit
+       --custid CUSTID, -i CUSTID
+                             API Customer ID
+       --custkey CUSTKEY, -k CUSTKEY
+                             API Customer Key
+       --write, -w           Write the API config to the file specified by the
+                             --config option
+       --config CONFIG, -c CONFIG
+                             Configuration File Name
+       --actor ACTOR, -a ACTOR
+                             Search for an actor by name
+       --actors ACTORS, -s ACTORS
+                             Search for a actors by pattern
+       --ip IP, -p IP        Search for an IP address
+       --domain DOMAIN, -d DOMAIN
+                             Search for a domain
+       --report REPORT, -r REPORT
+                             Search for a report
+       --indicator INDICATOR, -n INDICATOR
+                             Search for an indicator
+       --day                 Get all indicators that have changed in 24 hours
+       --week                Get all indicators that have changed in the past week
+       --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
+                             What should I print? Default: all
+       --related             Include related indicators.
 
 ## Using from the Command Line
 -------
