@@ -173,14 +173,14 @@ TODO
 ====
 
 
-*search for malware family
-*search for labels
-*search for target industry
-*search for threat type
-*search by vulnerability
-*input validating
-*error control
-*add proxy server support
+* search for malware family
+* search for labels
+* search for target industry
+* search for threat type
+* search by vulnerability
+* input validating
+* error control
+* add proxy server support
 
 
 -------------------------------------------------------------------------------------------------------
