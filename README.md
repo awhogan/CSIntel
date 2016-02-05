@@ -69,19 +69,19 @@ The command line usage is shown below:
 The first step to using this from the Command Line is to make sure you're passing your Customer ID
 and your Customer Key. There are two ways you can do this:
 
-    A) Pass your Customer ID and Key from the command line:
-        $> ./CSintel.py --custid <Customer ID> --custkey <Customer Key>
-    B) Place your Customer ID and Key in a config file to be read by the script. By default the file
+1. Pass your Customer ID and Key from the command line:
+        `$> ./CSintel.py --custid <Customer ID> --custkey <Customer Key>`
+2. Place your Customer ID and Key in a config file to be read by the script. By default the file
     expected is csintel.ini
 
-    In order to create this config file you can either write it explicitly or save the config from the
+In order to create this config file you can either write it explicitly or save the config from the
     command line executation. 
-        $> ./CSintel.py --custid ABCD --custkey EFGH --write 
+        `$> ./CSintel.py --custid ABCD --custkey EFGH --write`
 
-    This will save Customer ID & Key to the default config file (csintel.ini). If you wish to specify
-    a different file you can pass that: --write --config diffFile.ini
+This will save Customer ID & Key to the default config file (csintel.ini). If you wish to specify
+    a different file you can pass that: `--write --config diffFile.ini`
 
-    If you want to manually write the config file it follows this layout:
+If you want to manually write the config file it follows this layout:
 
         [CrowdStrikeIntelAPI]
         custid = ABCD
