@@ -201,6 +201,7 @@ validDomainType = ['Actor Controlled', 'DGA', 'DynamicDNS', 'DynamicDNS/Afraid',
 validConfidence = ['high', 'medium', 'low', 'unverified']
 validFilter = ['match', 'equal', 'gt', 'gte', 'lt', 'lte']
 validSort = ['indicator', 'type', 'report', 'actor', 'malicious_confidence', 'published_date', 'last_updated']
+validTarget = ['Aerospace', 'Agricultural', 'Chemical', 'Defense', 'Dissident', 'Energy', 'Extractive', 'Financial', 'Government', 'Healthcare', 'Insurance', 'International Organizations', 'Legal', 'Manufacturing', 'Media', 'NGO', 'Pharmaceutical', 'Research', 'Retail', 'Shipping', 'Technology', 'Telecom', 'Transportation', 'Universities']
 
 #local methods 
 def readConfig(fileName=None):
@@ -286,7 +287,8 @@ class CSIntelAPI:
         self.validConfidence = validConfidence
         self.validFilter = validFilter
         self.validSort = validSort
-        self.validDomainType = validDomainType 
+        self.validDomainType = validDomainType
+        self.validTarget = validTarget
 
     #end init
 
@@ -343,7 +345,7 @@ class CSIntelAPI:
         fullQuery = self.host + query #host part doesn't change
 
         #debug
-        #print "fullQuery: " + fullQuery
+        print "fullQuery: " + fullQuery
 
         headers = self.getHeaders() #format the API key & ID
         
@@ -621,7 +623,56 @@ class CSIntelAPI:
         return result
     #end SearchReport()
 
+    def GetTargetQuery(self, target, searchFilter, **kwargs):
+        """
+        Build an API query to serach by Target Industry.
+        Must pass it a target industry name as a string.
+        Other keyword arguments can be passed to include sorting etc.
+        Returns a string for the URL query search
+        """
 
+        encodedargs = ""
+
+        if any(kwargs):
+            #extra keyword arguments get passed - used to sort, filter.
+            encodedargs = "&" + self.getURLParams(**kwargs)
+
+        #build the query string
+        query = "Target?" + searchFilter + "=" + target + encodedargs
+
+        return query
+    #end GetTargetQuery()
+
+
+    def SearchTarget(self, target, searchFilter="equal", **kwargs):
+        """
+        Search the API for a specific Target Industry.
+        Pass the industry name as a string, and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate target
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter for last_updated")
+        if target not in self.validTarget:
+            raise Exception("Invalid target industry")
+
+        query = self.GetTargetQuery(target, searchFilter, **kwargs)
+        result = self.request(query)
+
+        #debug
+        print "query:"
+        print query
+        print "result:"
+        print result
+
+        return result
+    #end SearchTarget()
+
+
+#===================================
+# Output
+#===================================
 
     def GetHashesFromResults(self, result, related=False):
         """
@@ -860,6 +911,7 @@ if __name__ == "__main__":
     cmdGroup.add_argument( '--domain', '-d', type=str, help="Search for a domain", default=None)
     cmdGroup.add_argument( '--report', '-r', type=str, help="Search for a report name, e.g. CSIT-XXXX", default=None)
     cmdGroup.add_argument( '--indicator', '-n', type=str, help="Search for an indicator", default=None)
+    cmdGroup.add_argument( '--target', type=str, help="Search by Targeted Industry", default=None)
     cmdGroup.add_argument( '--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument( '--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
 
@@ -912,6 +964,9 @@ if __name__ == "__main__":
         
     if args.indicator is not None: #generic indicator search
         result = api_obj.SearchIndicatorMatch( args.indicator )
+
+    if args.target is not None: #search targeted industry
+        result = api_obj.SearchTarget( args.target )
 
     if args.day is not None: #grab indicators for the last day
         result = api_obj.SearchLastDay()
