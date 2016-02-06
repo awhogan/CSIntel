@@ -689,6 +689,23 @@ class CSIntelAPI:
         return result
     #end SearchTarget()
 
+    
+    def GetLabelQuery(self, label, searchFilter, **kwargs):
+        """
+        Doc
+        """
+        #stuff
+        return False
+    #end GetLabelQuery
+    
+    def SearchLabel(self, label, searchFilter="match", **kwargs):
+        """
+        Doc
+        """
+        #stuff
+        return False
+    #end SearchLabel()
+    
 
 #===================================
 # Output
