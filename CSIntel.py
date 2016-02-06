@@ -720,6 +720,9 @@ class CSIntelAPI:
         indicator. See the documentation for full capabilities or checkout
         the functions that call this one.
 
+        You can search the entirel label, with the forward slash.
+        For example, MaliciousConfidence/High
+
         """
  
         #validate 
