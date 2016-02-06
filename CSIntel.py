@@ -975,6 +975,7 @@ if __name__ == "__main__":
     cmdGroup.add_argument( '--domain', '-d', type=str, help="Search for a domain", default=None)
     cmdGroup.add_argument( '--report', '-r', type=str, help="Search for a report name, e.g. CSIT-XXXX", default=None)
     cmdGroup.add_argument( '--indicator', '-n', type=str, help="Search for an indicator", default=None)
+    cmdGroup.add_argument( '--label', '-l', type=str, help="Search for a label", default=None)
     cmdGroup.add_argument( '--target', type=str, help="Search by Targeted Industry", default=None)
     cmdGroup.add_argument( '--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument( '--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
@@ -1028,6 +1029,9 @@ if __name__ == "__main__":
         
     if args.indicator is not None: #generic indicator search
         result = api_obj.SearchIndicatorMatch( args.indicator )
+
+    if args.label is not None: # generic label search
+        result = api_obj.SearchLabel( args.label )
 
     if args.target is not None: #search targeted industry
         result = api_obj.SearchTarget( args.target )
