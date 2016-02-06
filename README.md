@@ -30,7 +30,7 @@ the CLI commands.
 The command line usage is shown below:
 
      usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
-                       [--config CONFIG]
+                       [--config CONFIG] [--debug]
                        (--actor ACTOR | --actors ACTORS | --ip IP | --indicator INDICATOR | --day | --week)
                        [--out {all,indicators,hashes,domains,ips,actors,reports}]
                        [--related]
@@ -47,6 +47,7 @@ The command line usage is shown below:
                              --config option
        --config CONFIG, -c CONFIG
                              Configuration File Name
+       --debug, -b           Turn on some debug strings
        --actor ACTOR, -a ACTOR
                              Search for an actor by name
        --actors ACTORS, -s ACTORS
@@ -58,6 +59,9 @@ The command line usage is shown below:
                              Search for a report
        --indicator INDICATOR, -n INDICATOR
                              Search for an indicator
+       --label LABEL, -l LABEL
+                             Search for a label
+       --target TARGET       Search by Targeted Industry
        --day                 Get all indicators that have changed in 24 hours
        --week                Get all indicators that have changed in the past week
        --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
@@ -175,8 +179,6 @@ TODO
 
 
 * search for malware family
-* search for labels
-* search for target industry
 * search for threat type
 * search by vulnerability
 * input validating
