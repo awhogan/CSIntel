@@ -680,19 +680,20 @@ class CSIntelAPI:
         query = self.GetTargetQuery(target, searchFilter, **kwargs)
         result = self.request(query)
 
-        #debug
-        #print "query:"
-        #print query
-        #print "result:"
-        #print result
-
         return result
     #end SearchTarget()
 
     
     def GetLabelQuery(self, label, searchFilter, **kwargs):
         """
-        Doc
+        Build an API query to serach by Label.
+        Must pass it a label as a string.
+
+        Labels are a generic framework for attaching metadata to an intel
+        indicator. See the documentation for full capabilities.
+
+        Other keyword arguments can be passed to include sorting etc.
+        Returns a string for the URL query search
         """
         #stuff
         return False
@@ -700,7 +701,14 @@ class CSIntelAPI:
     
     def SearchLabel(self, label, searchFilter="match", **kwargs):
         """
-        Doc
+        Search the API for a specific Label
+        Pass the label as a string, and any other options.
+        Returns the results of the API query.
+        
+        Labels are a generic framework for attaching metadata to an intel
+        indicator. See the documentation for full capabilities or checkout
+        the functions that call this one.
+
         """
         #stuff
         return False
