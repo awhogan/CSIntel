@@ -695,8 +695,19 @@ class CSIntelAPI:
         Other keyword arguments can be passed to include sorting etc.
         Returns a string for the URL query search
         """
-        #stuff
-        return False
+
+        #good query: search/labels?match=Retail
+
+        encodedargs = ""
+
+        if any(kwargs):
+            #extra keyword arguments get passed - used to sort, filter.
+            encodedargs = "&" + self.getURLParams(**kwargs)
+
+        #build the query string
+        query = "labels?" + searchFilter + "=" + label + encodedargs
+
+        return query
     #end GetLabelQuery
     
     def SearchLabel(self, label, searchFilter="match", **kwargs):
@@ -710,8 +721,15 @@ class CSIntelAPI:
         the functions that call this one.
 
         """
-        #stuff
-        return False
+ 
+        #validate 
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter for last_updated")
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
     #end SearchLabel()
     
 
