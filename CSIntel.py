@@ -198,7 +198,6 @@ validParameter = ['sort', 'order', 'last_updated', 'perPage', 'page']
 validSearch = ['indicator', 'actor', 'report', 'actor', 'malicious_confidence', 'published_date', 'last_updated', 'malware_family', 'kill_chain', 'domain_type']
 #validKillChain = []
 validDomainType = ['Actor Controlled', 'DGA', 'DynamicDNS', 'DynamicDNS/Afraid', 'DynamicDNS/DYN', 'DynamicDNS/Hostinger', 'DynamicDNS/noIP', 'DynamicDNS/Oray', 'KnownGood', 'LegitimateCompromised', 'PhishingDomain', 'Sinkholed', 'StragegicWebCompromise', 'Unregistered']
-validConfidence = ['high', 'medium', 'low', 'unverified']
 validFilter = ['match', 'equal', 'gt', 'gte', 'lt', 'lte']
 validSort = ['indicator', 'type', 'report', 'actor', 'malicious_confidence', 'published_date', 'last_updated']
 
@@ -283,7 +282,6 @@ class CSIntelAPI:
         self.validType = validType
         self.ValidParameter = validParameter
         self.validSearch = validSearch
-        self.validConfidence = validConfidence
         self.validFilter = validFilter
         self.validSort = validSort
         self.validDomainType = validDomainType
