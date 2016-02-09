@@ -29,44 +29,54 @@ the CLI commands.
 
 The command line usage is shown below:
 
-     usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
-                       [--config CONFIG] [--debug]
-                       (--actor ACTOR | --actors ACTORS | --ip IP | --indicator INDICATOR | --day | --week)
-                       [--out {all,indicators,hashes,domains,ips,actors,reports}]
-                       [--related]
-     
-     CS Intel API
-     
-     optional arguments:
-       -h, --help            show this help message and exit
-       --custid CUSTID, -i CUSTID
-                             API Customer ID
-       --custkey CUSTKEY, -k CUSTKEY
-                             API Customer Key
-       --write, -w           Write the API config to the file specified by the
-                             --config option
-       --config CONFIG, -c CONFIG
-                             Configuration File Name
-       --debug, -b           Turn on some debug strings
-       --actor ACTOR, -a ACTOR
-                             Search for an actor by name
-       --actors ACTORS, -s ACTORS
-                             Search for a actors by pattern
-       --ip IP, -p IP        Search for an IP address
-       --domain DOMAIN, -d DOMAIN
-                             Search for a domain
-       --report REPORT, -r REPORT
-                             Search for a report
-       --indicator INDICATOR, -n INDICATOR
-                             Search for an indicator
-       --label LABEL, -l LABEL
-                             Search for a label
-       --target TARGET       Search by Targeted Industry
-       --day                 Get all indicators that have changed in 24 hours
-       --week                Get all indicators that have changed in the past week
-       --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
-                             What should I print? Default: all
-       --related             Include related indicators.
+    usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
+                      [--config CONFIG] [--debug]
+                      (--actor ACTOR | --actors ACTORS | --ip IP | --domain DOMAIN | --report REPORT | --indicator INDICATOR | --label LABEL | --target TARGET | --confidence CONFIDENCE | --killchain KILLCHAIN | --malware MALWARE | --active | --threat THREAT | --domaintype DOMAINTYPE | --day | --week)
+                      [--out {all,indicators,hashes,domains,ips,actors,reports}]
+                      [--related]
+
+    CS Intel API - This program can be executed directly to work with
+    CrowdStrike's Threat Intel API or be imported into other scripts to use.
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --custid CUSTID, -i CUSTID
+                            API Customer ID
+      --custkey CUSTKEY, -k CUSTKEY
+                            API Customer Key
+      --write, -w           Write the API config to the file specified by the
+                            --config option
+      --config CONFIG, -c CONFIG
+                            Configuration File Name
+      --debug, -b           Turn on some debug strings
+      --actor ACTOR, -a ACTOR
+                            Search for an actor by name
+      --actors ACTORS, -s ACTORS
+                            Search for a actors by pattern
+      --ip IP, -p IP        Search for an IP address
+      --domain DOMAIN, -d DOMAIN
+                            Search for a domain
+      --report REPORT, -r REPORT
+                            Search for a report name, e.g. CSIT-XXXX
+      --indicator INDICATOR, -n INDICATOR
+                            Search for an indicator
+      --label LABEL, -l LABEL
+                            Search for a label
+      --target TARGET       Search by Targeted Industry
+      --confidence CONFIDENCE
+                            Search by Malicious Confidence
+      --killchain KILLCHAIN
+                            Search by kill chain stage
+      --malware MALWARE     Search by malware family
+      --active              Get confirmed active indicators
+      --threat THREAT       Search by threat type
+      --domaintype DOMAINTYPE
+                            Search by domain type
+      --day                 Get all indicators that have changed in 24 hours
+      --week                Get all indicators that have changed in the past week
+      --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
+                            What should I print? Default: all
+      --related             Flag: Include related indicators.
 
 ## Using from the Command Line
 -------
@@ -77,13 +87,13 @@ and your Customer Key. There are two ways you can do this:
 1. Pass your Customer ID and Key from the command line:
         `$> ./CSintel.py --custid <Customer ID> --custkey <Customer Key>`
 2. Place your Customer ID and Key in a config file to be read by the script. By default the file
-    expected is csintel.ini
+    expected is ~/.csintel.ini
 
 In order to create this config file you can either write it explicitly or save the config from the
     command line executation. 
         `$> ./CSintel.py --custid ABCD --custkey EFGH --write`
 
-This will save Customer ID & Key to the default config file (csintel.ini). If you wish to specify
+This will save Customer ID & Key to the default config file (~/.csintel.ini). If you wish to specify
     a different file you can pass that: `--write --config diffFile.ini`
 
 If you want to manually write the config file it follows this layout:
@@ -160,6 +170,18 @@ written by: adam.hogan@crowdstrike.com
 Change log
 =========
 
+Version 0.4
+* Changed default location for config file
+* Added Label search framework
+* Added specific functions to search for specific labels:
+    * SearchTarget
+    * SearchConfidence
+    * SearchKillChain
+    * SearchMalware
+    * SearchActive
+    * SearchThreat
+    * SearchDomainType
+
 Version 0.3
 * Added search for report name
 * Added documentation examples
@@ -178,8 +200,6 @@ TODO
 ====
 
 
-* search for malware family
-* search for threat type
 * search by vulnerability
 * input validating
 * error control
