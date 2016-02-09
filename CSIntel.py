@@ -832,6 +832,31 @@ class CSIntelAPI:
     #end SearchThreatType()
 
 
+    def SearchDomainType(self, domain, searchFilter="match", **kwargs):
+        """
+        Search the API by domain type
+        Pass the level as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        validType = ['ActorControlled', 'DGA', 'DynamicDNS', 'DynamicDNS/Afraid', 'DynamicDNS/DYN', 'DynamicDNS/Hostinger', 'DynamicDNS/noIP', 'DynamicDNS/Oray', 'KnownGood', 'LegitimateCompromised', 'PhishingDomain', 'Sinkholed', 'StrategicWebCompromise', 'Unregistered']
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+        if domain not in validType:
+            raise Exception("Invalid Domain type: " + domain)
+
+        #append chain to label type
+        #TODO
+        #label = "kill_chain/" + threat
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchDomainType()
+
 
 
 
@@ -1085,6 +1110,7 @@ if __name__ == "__main__":
     cmdGroup.add_argument( '--malware', type=str, help="Search by malware family", default=None)
     cmdGroup.add_argument( '--active', action='store_true', help="Get confirmed active indicators")
     cmdGroup.add_argument( '--threat', type=str, help="Search by threat type", default=None)
+    cmdGroup.add_argument( '--domaintype', type=str, help="Search by domain type", default=None)
     cmdGroup.add_argument( '--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument( '--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
 
@@ -1158,6 +1184,9 @@ if __name__ == "__main__":
 
     if args.threat is not None: #search by threat type
         result = api_obj.SearchThreat( args.threat )
+
+    if args.domaintype is not None: #search by domain type
+        result = api_obj.SearchDomainType( args.domaintype )
 
     if args.day is not None: #grab indicators for the last day
         result = api_obj.SearchLastDay()
