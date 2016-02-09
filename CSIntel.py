@@ -201,7 +201,6 @@ validDomainType = ['Actor Controlled', 'DGA', 'DynamicDNS', 'DynamicDNS/Afraid',
 validConfidence = ['high', 'medium', 'low', 'unverified']
 validFilter = ['match', 'equal', 'gt', 'gte', 'lt', 'lte']
 validSort = ['indicator', 'type', 'report', 'actor', 'malicious_confidence', 'published_date', 'last_updated']
-validTarget = ['Aerospace', 'Agricultural', 'Chemical', 'Defense', 'Dissident', 'Energy', 'Extractive', 'Financial', 'Government', 'Healthcare', 'Insurance', 'International Organizations', 'Legal', 'Manufacturing', 'Media', 'NGO', 'Pharmaceutical', 'Research', 'Retail', 'Shipping', 'Technology', 'Telecom', 'Transportation', 'Universities']
 
 #local methods 
 def readConfig(fileName=None):
@@ -288,7 +287,6 @@ class CSIntelAPI:
         self.validFilter = validFilter
         self.validSort = validSort
         self.validDomainType = validDomainType
-        self.validTarget = validTarget
 
         #debug?
         self.debug = debug
@@ -648,9 +646,6 @@ class CSIntelAPI:
         Returns a string for the URL query search
         """
 
-        #good query: search/labels?match=Retail
-        #maybe       search/labels?equal=Target/Retail  ?
-
         encodedargs = ""
 
         if any(kwargs):
@@ -672,9 +667,10 @@ class CSIntelAPI:
         """
 
         #validate target
+        validTarget = ['Aerospace', 'Agricultural', 'Chemical', 'Defense', 'Dissident', 'Energy', 'Extractive', 'Financial', 'Government', 'Healthcare', 'Insurance', 'International Organizations', 'Legal', 'Manufacturing', 'Media', 'NGO', 'Pharmaceutical', 'Research', 'Retail', 'Shipping', 'Technology', 'Telecom', 'Transportation', 'Universities']
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter for last_updated")
-        if target not in self.validTarget:
+        if target not in validTarget:
             raise Exception("Invalid target industry")
 
         query = self.GetTargetQuery(target, searchFilter, **kwargs)
