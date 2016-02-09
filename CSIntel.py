@@ -784,6 +784,30 @@ class CSIntelAPI:
     #end SearchMalware()
 
 
+    def SearchActive(self, searchFilter="match", **kwargs):
+        """
+        Search the API for indicators confirmed active
+        Pass the search filter
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+
+        #append chain to label type
+        label = "confirmedactive"
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchActive()
+
+
+
+
 
 
 #===================================
@@ -1032,6 +1056,8 @@ if __name__ == "__main__":
     cmdGroup.add_argument( '--target', type=str, help="Search by Targeted Industry", default=None)
     cmdGroup.add_argument( '--confidence', type=str, help="Search by Malicious Confidence", default=None)
     cmdGroup.add_argument( '--killchain', type=str, help="Search by kill chain stage", default=None)
+    cmdGroup.add_argument( '--malware', type=str, help="Search by malware family", default=None)
+    cmdGroup.add_argument( '--active', action='store_true', help="Get confirmed active indicators")
     cmdGroup.add_argument( '--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument( '--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
 
@@ -1096,6 +1122,12 @@ if __name__ == "__main__":
 
     if args.killchain is not None: #search by kill chain stage
         result = api_obj.SearchKillChain( args.killchain )
+
+    if args.malware is not None: #search by malware family
+        result = api_obj.SearchMalware( args.malware )
+
+    if args.active is not None: #search for confirmed active malware
+        result = api_obj.SearchActive()
 
     if args.day is not None: #grab indicators for the last day
         result = api_obj.SearchLastDay()
