@@ -27,10 +27,12 @@ The command line usage is shown below:
 
 -------------------------------------------------------------------------------------------------------
 usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
-                  [--config CONFIG]
-                  (--actor ACTOR | --actors ACTORS | --ip IP | --indicator INDICATOR | --day | --week)
+                  [--config CONFIG] [--debug]
+                  (--actor ACTOR | --actors ACTORS | --ip IP | --domain DOMAIN | --report REPORT | --indicator INDICATOR | --label LABEL | --target TARGET | --confidence CONFIDENCE | --killchain KILLCHAIN | --malware MALWARE | --active | --threat THREAT | --domaintype DOMAINTYPE | --day | --week)
                   [--out {all,indicators,hashes,domains,ips,actors,reports}]
                   [--related]
+
+
 
 CS Intel API
 
@@ -44,6 +46,7 @@ optional arguments:
                         --config option
   --config CONFIG, -c CONFIG
                         Configuration File Name
+  --debug, -b           Turn on some debug strings
   --actor ACTOR, -a ACTOR
                         Search for an actor by name
   --actors ACTORS, -s ACTORS
@@ -52,14 +55,28 @@ optional arguments:
   --domain DOMAIN, -d DOMAIN
                         Search for a domain
   --report REPORT, -r REPORT
-                        Search for a report
+                        Search for a report name, e.g. CSIT-XXXX
   --indicator INDICATOR, -n INDICATOR
                         Search for an indicator
+  --label LABEL, -l LABEL
+                        Search for a label
+  --target TARGET       Search by Targeted Industry
+  --confidence CONFIDENCE
+                        Search by Malicious Confidence
+  --killchain KILLCHAIN
+                        Search by kill chain stage
+  --malware MALWARE     Search by malware family
+  --active              Get confirmed active indicators
+  --threat THREAT       Search by threat type
+  --domaintype DOMAINTYPE
+                        Search by domain type
   --day                 Get all indicators that have changed in 24 hours
   --week                Get all indicators that have changed in the past week
   --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
                         What should I print? Default: all
-  --related             Include related indicators.
+  --related             Flag: Include related indicators.
+
+
 -------------------------------------------------------------------------------------------------------
 
 Using from the Command Line
@@ -71,7 +88,7 @@ and your Customer Key. There are two ways you can do this:
     A) Pass your Customer ID and Key from the command line:
         $> ./CSintel.py --custid <Customer ID> --custkey <Customer Key>
     B) Place your Customer ID and Key in a config file to be read by the script. By default the file
-    expected is csintel.ini
+    expected is ~/.csintel.ini
 
     In order to create this config file you can either write it explicitly or save the config from the
     command line executation. 
@@ -184,7 +201,7 @@ from datetime import datetime, timedelta
 #Global
 CSconfigSection = "CrowdStrikeIntelAPI"
 host = "https://intelapi.crowdstrike.com/indicator/v1/search/"
-defaultConfigFileName = "csintel.ini"
+defaultConfigFileName = "~/.csintel.ini"
 
 #setup
 __author__ = "Adam Hogan"
@@ -237,7 +254,7 @@ class CSIntelAPI:
 
     To create this object you need to pass your Customer ID and Cutomer Key. If you're
     going to be reusing this at all it is much faster to add your ID & Key to a config
-    file to be read by this script. The default config file is ./csintel.ini.
+    file to be read by this script. The default config file is ~/.csintel.ini.
 
     If you have a config file then creating an API object is easy.
 
