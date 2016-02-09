@@ -841,6 +841,7 @@ class CSIntelAPI:
         #append chain to label type
         #TODO
         #label = "kill_chain/" + threat
+        label = threat
 
         query = self.GetLabelQuery(label, searchFilter, **kwargs)
         result = self.request(query)
@@ -866,13 +867,68 @@ class CSIntelAPI:
 
         #append chain to label type
         #TODO
-        #label = "kill_chain/" + threat
+        #label = "kill_chain/" + domain
+        label = domain
 
         query = self.GetLabelQuery(label, searchFilter, **kwargs)
         result = self.request(query)
 
         return result
     #end SearchDomainType()
+
+
+    def SearchEmailType(self, email, searchFilter="match", **kwargs):
+        """
+        Search the API by email address type
+        Pass the email address type as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        validType = ['DomainRegistrant', 'SpearphishSender', 'IntelNews']
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+        if email not in validType:
+            raise Exception("Invalid Domain type: " + domain)
+
+        #append chain to label type
+        #TODO
+        #label = "kill_chain/" + email
+        label = email
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchEmailType()
+
+
+    def SearchIPType(self, iptype, searchFilter="match", **kwargs):
+        """
+        Search the API by ip address type
+        Pass the ip address type as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        validType = ['HtranDestinationNode', 'HtranProxy', 'HtranProxy']
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+        if email not in validType:
+            raise Exception("Invalid Domain type: " + iptype)
+
+        #append chain to label type
+        #TODO
+        #label = "kill_chain/" + iptype
+        label = iptype
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchIPType()
 
 
 
