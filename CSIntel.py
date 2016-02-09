@@ -638,26 +638,6 @@ class CSIntelAPI:
         return result
     #end SearchReport()
 
-    def GetTargetQuery(self, target, searchFilter, **kwargs):
-        """
-        Build an API query to serach by Target Industry.
-        Must pass it a target industry name as a string.
-        Other keyword arguments can be passed to include sorting etc.
-        Returns a string for the URL query search
-        """
-
-        encodedargs = ""
-
-        if any(kwargs):
-            #extra keyword arguments get passed - used to sort, filter.
-            encodedargs = "&" + self.getURLParams(**kwargs)
-
-        #build the query string
-        query = "labels?" + searchFilter + "=" + target + encodedargs
-
-        return query
-    #end GetTargetQuery()
-
 
     def SearchTarget(self, target, searchFilter="match", **kwargs):
         """
@@ -673,7 +653,10 @@ class CSIntelAPI:
         if target not in validTarget:
             raise Exception("Invalid target industry")
 
-        query = self.GetTargetQuery(target, searchFilter, **kwargs)
+        #append industry
+        label = "Target/" + target
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
         result = self.request(query)
 
         return result
@@ -730,7 +713,33 @@ class CSIntelAPI:
 
         return result
     #end SearchLabel()
-    
+   
+
+    def SearchConfidence(self, confidence, searchFilter="match", **kwargs):
+        """
+        Search the API by Malicious Confidence.
+        Pass the level (high, medium, low, unverified) as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate target
+        validConfidence = ['high', 'medium', 'low', 'unverified']
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter for last_updated")
+        if confidence not in validConfidence:
+            raise Exception("Invalid confidence level: " + confidence)
+
+        #append industry
+        label = "MaliciousConfidence/" + confidence
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchTarget()
+
+
 
 #===================================
 # Output
