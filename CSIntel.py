@@ -196,7 +196,6 @@ __version__ = 0.3
 validType = ['binary_string', 'compile_time', 'device_name', 'domain', 'email_address', 'email_subject', 'event_name', 'file_mapping', 'file_name', 'file_path', 'hash_ion', 'hash_md5', 'hash_sha1', 'hash_sha256', 'ip_address', 'ip_address_block', 'mutex_name', 'password', 'persona_name', 'phone_number', 'port', 'registry', 'semaphore_name', 'service_name', 'url', 'user_agent', 'username', 'x509_serial', 'x509_subject']
 validParameter = ['sort', 'order', 'last_updated', 'perPage', 'page']
 validSearch = ['indicator', 'actor', 'report', 'actor', 'malicious_confidence', 'published_date', 'last_updated', 'malware_family', 'kill_chain', 'domain_type']
-#validKillChain = []
 validDomainType = ['Actor Controlled', 'DGA', 'DynamicDNS', 'DynamicDNS/Afraid', 'DynamicDNS/DYN', 'DynamicDNS/Hostinger', 'DynamicDNS/noIP', 'DynamicDNS/Oray', 'KnownGood', 'LegitimateCompromised', 'PhishingDomain', 'Sinkholed', 'StragegicWebCompromise', 'Unregistered']
 validFilter = ['match', 'equal', 'gt', 'gte', 'lt', 'lte']
 validSort = ['indicator', 'type', 'report', 'actor', 'malicious_confidence', 'published_date', 'last_updated']
@@ -761,6 +760,29 @@ class CSIntelAPI:
 
         return result
     #end SearchKillChain()
+
+
+    def SearchMalware(self, malware, searchFilter="match", **kwargs):
+        """
+        Search the API by malware family.
+        Pass the level as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+
+        #append chain to label type
+        label = "malware_families/" + malware
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchMalware()
+
 
 
 
