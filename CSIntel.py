@@ -1009,6 +1009,7 @@ if __name__ == "__main__":
     cmdGroup.add_argument( '--label', '-l', type=str, help="Search for a label", default=None)
     cmdGroup.add_argument( '--target', type=str, help="Search by Targeted Industry", default=None)
     cmdGroup.add_argument( '--confidence', type=str, help="Search by Malicious Confidence", default=None)
+    cmdGroup.add_argument( '--killchain', type=str, help="Search by kill chain stage", default=None)
     cmdGroup.add_argument( '--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument( '--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
 
@@ -1070,6 +1071,9 @@ if __name__ == "__main__":
 
     if args.confidence is not None: #search malicious confidence
         result = api_obj.SearchConfidence( args.confidence )
+
+    if args.killchain is not None: #search by kill chain stage
+        result = api_obj.SearchKillChain( args.killchain )
 
     if args.day is not None: #grab indicators for the last day
         result = api_obj.SearchLastDay()
