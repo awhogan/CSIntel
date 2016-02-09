@@ -647,7 +647,7 @@ class CSIntelAPI:
         #validate target
         validTarget = ['Aerospace', 'Agricultural', 'Chemical', 'Defense', 'Dissident', 'Energy', 'Extractive', 'Financial', 'Government', 'Healthcare', 'Insurance', 'International Organizations', 'Legal', 'Manufacturing', 'Media', 'NGO', 'Pharmaceutical', 'Research', 'Retail', 'Shipping', 'Technology', 'Telecom', 'Transportation', 'Universities']
         if searchFilter not in self.validFilter:
-            raise Exception("Invalid search filter for last_updated")
+            raise Exception("Invalid search filter")
         if target not in validTarget:
             raise Exception("Invalid target industry")
 
@@ -704,7 +704,7 @@ class CSIntelAPI:
  
         #validate 
         if searchFilter not in self.validFilter:
-            raise Exception("Invalid search filter for last_updated")
+            raise Exception("Invalid search filter")
 
         query = self.GetLabelQuery(label, searchFilter, **kwargs)
         result = self.request(query)
@@ -724,7 +724,7 @@ class CSIntelAPI:
         #validate target
         validConfidence = ['high', 'medium', 'low', 'unverified']
         if searchFilter not in self.validFilter:
-            raise Exception("Invalid search filter for last_updated")
+            raise Exception("Invalid search filter")
         if confidence not in validConfidence:
             raise Exception("Invalid confidence level: " + confidence)
 
@@ -735,7 +735,32 @@ class CSIntelAPI:
         result = self.request(query)
 
         return result
-    #end SearchTarget()
+    #end SearchConfidence()
+
+
+    def SearchKillChain(self, chain, searchFilter="match", **kwargs):
+        """
+        Search the API by Kill Chain stage.
+        Pass the level as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        validKillChain = ['reconnaissance', 'weaponization', 'delivery', 'exploitation', 'installation', 'c2', 'actionsonobjectives']
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+        if chain not in validKillChain:
+            raise Exception("Invalid kill chain link: " + chain)
+
+        #append chain to label type
+        label = "kill_chain/" + chain
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchKillChain()
 
 
 
