@@ -836,8 +836,8 @@ class CSIntelAPI:
         validThreat = ['ClickFraud', 'Commodity', 'PointOfSale', 'Ransomware', 'Suspicious', 'Targeted', 'TargetedCrimeware', 'Vulnerability']
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter")
-        if chain not in validThreat:
-            raise Exception("Invalid Threat type: " + chain)
+        if threat not in validThreat:
+            raise Exception("Invalid Threat type: " + threat)
 
         #append chain to label type
         #TODO
@@ -1257,7 +1257,7 @@ if __name__ == "__main__":
         result = api_obj.SearchActive()
 
     if args.threat is not None: #search by threat type
-        result = api_obj.SearchThreat( args.threat )
+        result = api_obj.SearchThreatType( args.threat )
 
     if args.domaintype is not None: #search by domain type
         result = api_obj.SearchDomainType( args.domaintype )
