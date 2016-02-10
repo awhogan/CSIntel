@@ -224,6 +224,11 @@ def readConfig(fileName=None):
     before an API object is created. Just pass it the filename
     to read an existing config file."""
 
+    #check file exists
+    if (os.path.exists(fileName)) == False:
+        raise Exception("Config file does not exist: " + fileName)
+
+        
     #read config file
     parser = SafeConfigParser()
     parser.read( fileName )
