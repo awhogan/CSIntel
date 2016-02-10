@@ -196,12 +196,13 @@ import requests
 from ConfigParser import SafeConfigParser
 from urllib import urlencode
 from datetime import datetime, timedelta
+import os
 
 
 #Global
 CSconfigSection = "CrowdStrikeIntelAPI"
 host = "https://intelapi.crowdstrike.com/indicator/v1/search/"
-defaultConfigFileName = "~/.csintel.ini"
+defaultConfigFileName = os.path.join( os.path.expanduser("~"), ".csintel.ini" )
 
 #setup
 __author__ = "Adam Hogan"
