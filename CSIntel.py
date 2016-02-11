@@ -154,33 +154,7 @@ Search a specified report and print all hashes associated with it
 -------------------------------------------------------------------------------------------------------
 written by: adam.hogan@crowdstrike.com
 
-Change log
-=========
-
-Version 0.4
-    * Added search by label
-    * Changed default config file to ~/.csintel.ini 
-    * Check to see if config file exists and error with more help.
-    * Added specific label searches (e.g. search by malware confidence level, domain type)
-Version 0.3
-    * Added search for report name
-    * Added documentation examples
-    * Cleaned up config write
-Version 0.2
-    * Added indicator labels option, and it's availability from the CLI
-    * Added "related" options to data methods to get indicators related to the original indicators.
-      Also available from the Command Line with the --related flag.
-Version 0.1
-    * Initial release
-
-
-TODO
-    * search by vulnerability
-    * input validating
-    * add proxy server support
-    * pagination
-    * output formats? open to suggestions.
--------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
 """
 
 import requests
@@ -883,7 +857,7 @@ class CSIntelAPI:
         """
 
         #validate parameters
-        validType = ['DomainRegistrant', 'SpearphishSender', 'IntelNews']
+        validType = ['DomainRegistrant', 'SpearphishSender']
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter")
         if email not in validType:
