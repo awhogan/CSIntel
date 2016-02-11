@@ -32,9 +32,8 @@ usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
                   [--out {all,indicators,hashes,domains,ips,actors,reports}]
                   [--related]
 
-
-
-CS Intel API
+CS Intel API - This program can be executed directly to work with
+CrowdStrike's Threat Intel API or be imported into other scripts to use.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -75,7 +74,6 @@ optional arguments:
   --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
                         What should I print? Default: all
   --related             Flag: Include related indicators.
-
 
 -------------------------------------------------------------------------------------------------------
 
@@ -168,6 +166,11 @@ written by: adam.hogan@crowdstrike.com
 Change log
 =========
 
+Version 0.4
+    * Added search by label
+    * Changed default config file to ~/.csintel.ini 
+    * Check to see if config file exists and error with more help.
+    * Added specific label searches (e.g. search by malware confidence level, domain type)
 Version 0.3
     * Added search for report name
     * Added documentation examples
