@@ -919,11 +919,11 @@ class CSIntelAPI:
         """
 
         #validate parameters
-        validType = ['HtranDestinationNode', 'HtranProxy', 'HtranProxy']
+        validType = ['HtranDestinationNode', 'HtranProxy', 'HtranProxy', 'LegitimateCompromised', 'Parking', 'PopularSite', 'SharedWebHost', 'Sinkholed', 'TorProxy']
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter")
-        if email not in validType:
-            raise Exception("Invalid Domain type: " + iptype)
+        if iptype not in validType:
+            raise Exception("Invalid email IP type: " + iptype)
 
         #append chain to label type
         #TODO
@@ -1190,6 +1190,7 @@ if __name__ == "__main__":
     cmdGroup.add_argument( '--active', action='store_true', help="Get confirmed active indicators")
     cmdGroup.add_argument( '--threat', type=str, help="Search by threat type", default=None)
     cmdGroup.add_argument( '--domaintype', type=str, help="Search by domain type", default=None)
+    cmdGroup.add_argument( '--iptype', type=str, help="Search by IP Type", default=None)
     cmdGroup.add_argument( '--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument( '--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
 
@@ -1266,6 +1267,9 @@ if __name__ == "__main__":
 
     if args.domaintype is not None: #search by domain type
         result = api_obj.SearchDomainType( args.domaintype )
+
+    if args.iptype is not None: #search by IP Address type
+        result = api_obj.SearchIPType( args.iptype )
 
     if args.day is not None: #grab indicators for the last day
         result = api_obj.SearchLastDay()
