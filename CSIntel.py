@@ -810,9 +810,7 @@ class CSIntelAPI:
             raise Exception("Invalid Threat type: " + threat)
 
         #append chain to label type
-        #TODO
-        #label = "kill_chain/" + threat
-        label = threat
+        label = "ThreatType/" + threat
 
         query = self.GetLabelQuery(label, searchFilter, **kwargs)
         result = self.request(query)
@@ -837,9 +835,7 @@ class CSIntelAPI:
             raise Exception("Invalid Domain type: " + domain)
 
         #append chain to label type
-        #TODO
-        #label = "kill_chain/" + domain
-        label = domain
+        label = "DomaintType/" + domain
 
         query = self.GetLabelQuery(label, searchFilter, **kwargs)
         result = self.request(query)
@@ -864,9 +860,7 @@ class CSIntelAPI:
             raise Exception("Invalid Domain type: " + domain)
 
         #append chain to label type
-        #TODO
-        #label = "kill_chain/" + email
-        label = email
+        label = "EmailAddressType/" + email
 
         query = self.GetLabelQuery(label, searchFilter, **kwargs)
         result = self.request(query)
@@ -884,15 +878,12 @@ class CSIntelAPI:
         """
 
         #validate parameters
-        validType = ['HtranDestinationNode', 'HtranProxy', 'HtranProxy']
+        validType = ['HtranDestinationNode', 'HtranProxy', 'HtranProxy', 'LegitimateCompromised', 'Parking', 'PopularSite', 'SharedWebHost', 'Sinkholed', 'TorProxy']
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter")
-        if email not in validType:
-            raise Exception("Invalid Domain type: " + iptype)
+        if iptype not in validType:
+            raise Exception("Invalid email IP type: " + iptype)
 
-        #append chain to label type
-        #TODO
-        #label = "kill_chain/" + iptype
         label = iptype
 
         query = self.GetLabelQuery(label, searchFilter, **kwargs)
@@ -1155,6 +1146,8 @@ if __name__ == "__main__":
     cmdGroup.add_argument( '--active', action='store_true', help="Get confirmed active indicators")
     cmdGroup.add_argument( '--threat', type=str, help="Search by threat type", default=None)
     cmdGroup.add_argument( '--domaintype', type=str, help="Search by domain type", default=None)
+    cmdGroup.add_argument( '--iptype', type=str, help="Search by IP Type", default=None)
+    cmdGroup.add_argument( '--emailtype', type=str, help="Search by email address type", default=None)
     cmdGroup.add_argument( '--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument( '--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
 
@@ -1231,6 +1224,12 @@ if __name__ == "__main__":
 
     if args.domaintype is not None: #search by domain type
         result = api_obj.SearchDomainType( args.domaintype )
+
+    if args.iptype is not None: #search by IP Address type
+        result = api_obj.SearchIPType( args.iptype )
+
+    if args.emailtype is not None: #search by email type
+        result = api_obj.SearchEmailType( args.emailtype )
 
     if args.day is not None: #grab indicators for the last day
         result = api_obj.SearchLastDay()
