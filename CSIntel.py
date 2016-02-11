@@ -103,15 +103,6 @@ and your Customer Key. There are two ways you can do this:
 
 Once you are setup to pass your Customer ID and Key you can start searching the Threat Intel API. 
 
-    --actor
-    --actors
-    --ip
-    --domain
-    --report
-    --indicator
-    --day
-    --week
-
 You can also specify what output you want to receive. By default these methods will pretty print all
 JSON received from the API request. Altenatively you can specify:
 
@@ -184,14 +175,11 @@ Version 0.1
 
 
 TODO
-    *search for malware family
-    *search for labels
-    *search for target industry
-    *search for threat type
-    *search by vulnerability
-    *input validating
-    *error control
-    *add proxy server support
+    * search by vulnerability
+    * input validating
+    * add proxy server support
+    * pagination
+    * output formats? open to suggestions.
 -------------------------------------------------------------------------------------------------------
 """
 
