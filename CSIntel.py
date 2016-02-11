@@ -919,9 +919,6 @@ class CSIntelAPI:
         if iptype not in validType:
             raise Exception("Invalid email IP type: " + iptype)
 
-        #append chain to label type
-        #TODO
-        #label = "kill_chain/" + iptype
         label = iptype
 
         query = self.GetLabelQuery(label, searchFilter, **kwargs)
