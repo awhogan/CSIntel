@@ -27,12 +27,13 @@ The command line usage is shown below:
 
 -------------------------------------------------------------------------------------------------------
 usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
-                  [--config CONFIG]
-                  (--actor ACTOR | --actors ACTORS | --ip IP | --indicator INDICATOR | --day | --week)
+                  [--config CONFIG] [--debug]
+                  (--actor ACTOR | --actors ACTORS | --ip IP | --domain DOMAIN | --report REPORT | --indicator INDICATOR | --label LABEL | --target TARGET | --confidence CONFIDENCE | --killchain KILLCHAIN | --malware MALWARE | --active | --threat THREAT | --domaintype DOMAINTYPE | --day | --week)
                   [--out {all,indicators,hashes,domains,ips,actors,reports}]
                   [--related]
 
-CS Intel API
+CS Intel API - This program can be executed directly to work with
+CrowdStrike's Threat Intel API or be imported into other scripts to use.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -44,6 +45,7 @@ optional arguments:
                         --config option
   --config CONFIG, -c CONFIG
                         Configuration File Name
+  --debug, -b           Turn on some debug strings
   --actor ACTOR, -a ACTOR
                         Search for an actor by name
   --actors ACTORS, -s ACTORS
@@ -52,14 +54,27 @@ optional arguments:
   --domain DOMAIN, -d DOMAIN
                         Search for a domain
   --report REPORT, -r REPORT
-                        Search for a report
+                        Search for a report name, e.g. CSIT-XXXX
   --indicator INDICATOR, -n INDICATOR
                         Search for an indicator
+  --label LABEL, -l LABEL
+                        Search for a label
+  --target TARGET       Search by Targeted Industry
+  --confidence CONFIDENCE
+                        Search by Malicious Confidence
+  --killchain KILLCHAIN
+                        Search by kill chain stage
+  --malware MALWARE     Search by malware family
+  --active              Get confirmed active indicators
+  --threat THREAT       Search by threat type
+  --domaintype DOMAINTYPE
+                        Search by domain type
   --day                 Get all indicators that have changed in 24 hours
   --week                Get all indicators that have changed in the past week
   --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
                         What should I print? Default: all
-  --related             Include related indicators.
+  --related             Flag: Include related indicators.
+
 -------------------------------------------------------------------------------------------------------
 
 Using from the Command Line
@@ -71,7 +86,7 @@ and your Customer Key. There are two ways you can do this:
     A) Pass your Customer ID and Key from the command line:
         $> ./CSintel.py --custid <Customer ID> --custkey <Customer Key>
     B) Place your Customer ID and Key in a config file to be read by the script. By default the file
-    expected is csintel.ini
+    expected is ~/.csintel.ini
 
     In order to create this config file you can either write it explicitly or save the config from the
     command line executation. 
@@ -87,15 +102,6 @@ and your Customer Key. There are two ways you can do this:
         custkey = EFGH
 
 Once you are setup to pass your Customer ID and Key you can start searching the Threat Intel API. 
-
-    --actor
-    --actors
-    --ip
-    --domain
-    --report
-    --indicator
-    --day
-    --week
 
 You can also specify what output you want to receive. By default these methods will pretty print all
 JSON received from the API request. Altenatively you can specify:
@@ -148,43 +154,20 @@ Search a specified report and print all hashes associated with it
 -------------------------------------------------------------------------------------------------------
 written by: adam.hogan@crowdstrike.com
 
-Change log
-=========
-
-Version 0.3
-    * Added search for report name
-    * Added documentation examples
-    * Cleaned up config write
-Version 0.2
-    * Added indicator labels option, and it's availability from the CLI
-    * Added "related" options to data methods to get indicators related to the original indicators.
-      Also available from the Command Line with the --related flag.
-Version 0.1
-    * Initial release
-
-
-TODO
-    *search for malware family
-    *search for labels
-    *search for target industry
-    *search for threat type
-    *search by vulnerability
-    *input validating
-    *error control
-    *add proxy server support
--------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------
 """
 
 import requests
 from ConfigParser import SafeConfigParser
 from urllib import urlencode
 from datetime import datetime, timedelta
+import os
 
 
 #Global
 CSconfigSection = "CrowdStrikeIntelAPI"
 host = "https://intelapi.crowdstrike.com/indicator/v1/search/"
-defaultConfigFileName = "csintel.ini"
+defaultConfigFileName = os.path.join( os.path.expanduser("~"), ".csintel.ini" )
 
 #setup
 __author__ = "Adam Hogan"
@@ -196,12 +179,9 @@ __version__ = 0.3
 validType = ['binary_string', 'compile_time', 'device_name', 'domain', 'email_address', 'email_subject', 'event_name', 'file_mapping', 'file_name', 'file_path', 'hash_ion', 'hash_md5', 'hash_sha1', 'hash_sha256', 'ip_address', 'ip_address_block', 'mutex_name', 'password', 'persona_name', 'phone_number', 'port', 'registry', 'semaphore_name', 'service_name', 'url', 'user_agent', 'username', 'x509_serial', 'x509_subject']
 validParameter = ['sort', 'order', 'last_updated', 'perPage', 'page']
 validSearch = ['indicator', 'actor', 'report', 'actor', 'malicious_confidence', 'published_date', 'last_updated', 'malware_family', 'kill_chain', 'domain_type']
-#validKillChain = []
 validDomainType = ['Actor Controlled', 'DGA', 'DynamicDNS', 'DynamicDNS/Afraid', 'DynamicDNS/DYN', 'DynamicDNS/Hostinger', 'DynamicDNS/noIP', 'DynamicDNS/Oray', 'KnownGood', 'LegitimateCompromised', 'PhishingDomain', 'Sinkholed', 'StragegicWebCompromise', 'Unregistered']
-validConfidence = ['high', 'medium', 'low', 'unverified']
 validFilter = ['match', 'equal', 'gt', 'gte', 'lt', 'lte']
 validSort = ['indicator', 'type', 'report', 'actor', 'malicious_confidence', 'published_date', 'last_updated']
-validTarget = ['Aerospace', 'Agricultural', 'Chemical', 'Defense', 'Dissident', 'Energy', 'Extractive', 'Financial', 'Government', 'Healthcare', 'Insurance', 'International Organizations', 'Legal', 'Manufacturing', 'Media', 'NGO', 'Pharmaceutical', 'Research', 'Retail', 'Shipping', 'Technology', 'Telecom', 'Transportation', 'Universities']
 
 #local methods 
 def readConfig(fileName=None):
@@ -209,6 +189,11 @@ def readConfig(fileName=None):
     before an API object is created. Just pass it the filename
     to read an existing config file."""
 
+    #check file exists
+    if (os.path.exists(fileName)) == False:
+        raise Exception("Config file does not exist: " + fileName)
+
+        
     #read config file
     parser = SafeConfigParser()
     parser.read( fileName )
@@ -240,7 +225,7 @@ class CSIntelAPI:
 
     To create this object you need to pass your Customer ID and Cutomer Key. If you're
     going to be reusing this at all it is much faster to add your ID & Key to a config
-    file to be read by this script. The default config file is ./csintel.ini.
+    file to be read by this script. The default config file is ~/.csintel.ini.
 
     If you have a config file then creating an API object is easy.
 
@@ -262,7 +247,7 @@ class CSIntelAPI:
     """
 
 
-    def __init__(self, custid=None, custkey=None):
+    def __init__(self, custid=None, custkey=None, debug=False):
         """
         Intit funciton for the CS Intel API object - pass it the API customer ID and
         customer key to create it. 
@@ -284,11 +269,12 @@ class CSIntelAPI:
         self.validType = validType
         self.ValidParameter = validParameter
         self.validSearch = validSearch
-        self.validConfidence = validConfidence
         self.validFilter = validFilter
         self.validSort = validSort
         self.validDomainType = validDomainType
-        self.validTarget = validTarget
+
+        #debug?
+        self.debug = debug
 
     #end init
 
@@ -344,13 +330,27 @@ class CSIntelAPI:
 
         fullQuery = self.host + query #host part doesn't change
 
-        #debug
-        #print "fullQuery: " + fullQuery
+        if self.debug:
+            print "fullQuery: " + fullQuery
 
         headers = self.getHeaders() #format the API key & ID
         
         #use requests library to pull request
         r = requests.get( fullQuery, headers=headers ) 
+
+        #Error handling for HTTP request
+
+        # 400 - bad request
+        if r.status_code == 400:
+            raise Exception('HTTP Error 400 - Bad request.')
+
+        # 404 - oh shit
+        if r.status_code == 404:
+            raise Exception('HTTP Error 404 - awww snap.')
+
+        # catch all?
+        if r.status_code != 200:
+            raise Exception('HTTP Error: ' + str(r.status_code) )
 
         return r
     #end request()
@@ -525,8 +525,8 @@ class CSIntelAPI:
 
         query = "last_updated?" + searchFilter + "=" + str(date) + "&" + encodedargs
 
-        #debug
-        #print "query: " + query
+        if self.debug:
+            print "query: " + query
 
         return query
     #end getLastUpdatedQuery
@@ -623,29 +623,6 @@ class CSIntelAPI:
         return result
     #end SearchReport()
 
-    def GetTargetQuery(self, target, searchFilter, **kwargs):
-        """
-        Build an API query to serach by Target Industry.
-        Must pass it a target industry name as a string.
-        Other keyword arguments can be passed to include sorting etc.
-        Returns a string for the URL query search
-        """
-
-        #good query: search/labels?match=Retail
-        #maybe       search/labels?equal=Target/Retail  ?
-
-        encodedargs = ""
-
-        if any(kwargs):
-            #extra keyword arguments get passed - used to sort, filter.
-            encodedargs = "&" + self.getURLParams(**kwargs)
-
-        #build the query string
-        query = "labels?" + searchFilter + "=" + target + encodedargs
-
-        return query
-    #end GetTargetQuery()
-
 
     def SearchTarget(self, target, searchFilter="match", **kwargs):
         """
@@ -655,22 +632,268 @@ class CSIntelAPI:
         """
 
         #validate target
+        validTarget = ['Aerospace', 'Agricultural', 'Chemical', 'Defense', 'Dissident', 'Energy', 'Extractive', 'Financial', 'Government', 'Healthcare', 'Insurance', 'International Organizations', 'Legal', 'Manufacturing', 'Media', 'NGO', 'Pharmaceutical', 'Research', 'Retail', 'Shipping', 'Technology', 'Telecom', 'Transportation', 'Universities']
         if searchFilter not in self.validFilter:
-            raise Exception("Invalid search filter for last_updated")
-        if target not in self.validTarget:
+            raise Exception("Invalid search filter")
+        if target not in validTarget:
             raise Exception("Invalid target industry")
 
-        query = self.GetTargetQuery(target, searchFilter, **kwargs)
-        result = self.request(query)
+        #append industry
+        label = "Target/" + target
 
-        #debug
-        #print "query:"
-        #print query
-        #print "result:"
-        #print result
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
 
         return result
     #end SearchTarget()
+
+    
+    def GetLabelQuery(self, label, searchFilter, **kwargs):
+        """
+        Build an API query to serach by Label.
+        Must pass it a label as a string.
+
+        Labels are a generic framework for attaching metadata to an intel
+        indicator. See the documentation for full capabilities.
+
+        Other keyword arguments can be passed to include sorting etc.
+        Returns a string for the URL query search
+        """
+
+        #good query: search/labels?match=Retail
+
+        encodedargs = ""
+
+        if any(kwargs):
+            #extra keyword arguments get passed - used to sort, filter.
+            encodedargs = "&" + self.getURLParams(**kwargs)
+
+        #build the query string
+        query = "labels?" + searchFilter + "=" + label + encodedargs
+
+        return query
+    #end GetLabelQuery
+    
+    def SearchLabel(self, label, searchFilter="match", **kwargs):
+        """
+        Search the API for a specific Label
+        Pass the label as a string, and any other options.
+        Returns the results of the API query.
+        
+        Labels are a generic framework for attaching metadata to an intel
+        indicator. See the documentation for full capabilities or checkout
+        the functions that call this one.
+
+        You can search the entirel label, with the forward slash.
+        For example, MaliciousConfidence/High
+
+        """
+ 
+        #validate 
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchLabel()
+   
+
+    def SearchConfidence(self, confidence, searchFilter="match", **kwargs):
+        """
+        Search the API by Malicious Confidence.
+        Pass the level (high, medium, low, unverified) as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate target
+        validConfidence = ['high', 'medium', 'low', 'unverified']
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+        if confidence not in validConfidence:
+            raise Exception("Invalid confidence level: " + confidence)
+
+        #append industry
+        label = "MaliciousConfidence/" + confidence
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchConfidence()
+
+
+    def SearchKillChain(self, chain, searchFilter="match", **kwargs):
+        """
+        Search the API by Kill Chain stage.
+        Pass the level as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        validKillChain = ['reconnaissance', 'weaponization', 'delivery', 'exploitation', 'installation', 'c2', 'actionsonobjectives']
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+        if chain not in validKillChain:
+            raise Exception("Invalid kill chain link: " + chain)
+
+        #append chain to label type
+        label = "kill_chain/" + chain
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchKillChain()
+
+
+    def SearchMalware(self, malware, searchFilter="match", **kwargs):
+        """
+        Search the API by malware family.
+        Pass the level as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+
+        #append chain to label type
+        label = "malware_families/" + malware
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchMalware()
+
+
+    def SearchActive(self, searchFilter="match", **kwargs):
+        """
+        Search the API for indicators confirmed active
+        Pass the search filter
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+
+        #append chain to label type
+        label = "confirmedactive"
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchActive()
+
+
+    def SearchThreatType(self, threat, searchFilter="match", **kwargs):
+        """
+        Search the API by threat type
+        Pass the level as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        validThreat = ['ClickFraud', 'Commodity', 'PointOfSale', 'Ransomware', 'Suspicious', 'Targeted', 'TargetedCrimeware', 'Vulnerability']
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+        if threat not in validThreat:
+            raise Exception("Invalid Threat type: " + threat)
+
+        #append chain to label type
+        label = "ThreatType/" + threat
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchThreatType()
+
+
+    def SearchDomainType(self, domain, searchFilter="match", **kwargs):
+        """
+        Search the API by domain type
+        Pass the level as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        validType = ['ActorControlled', 'DGA', 'DynamicDNS', 'DynamicDNS/Afraid', 'DynamicDNS/DYN', 'DynamicDNS/Hostinger', 'DynamicDNS/noIP', 'DynamicDNS/Oray', 'KnownGood', 'LegitimateCompromised', 'PhishingDomain', 'Sinkholed', 'StrategicWebCompromise', 'Unregistered']
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+        if domain not in validType:
+            raise Exception("Invalid Domain type: " + domain)
+
+        #append chain to label type
+        label = "DomaintType/" + domain
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchDomainType()
+
+
+    def SearchEmailType(self, email, searchFilter="match", **kwargs):
+        """
+        Search the API by email address type
+        Pass the email address type as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        validType = ['DomainRegistrant', 'SpearphishSender']
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+        if email not in validType:
+            raise Exception("Invalid Domain type: " + domain)
+
+        #append chain to label type
+        label = "EmailAddressType/" + email
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchEmailType()
+
+
+    def SearchIPType(self, iptype, searchFilter="match", **kwargs):
+        """
+        Search the API by ip address type
+        Pass the ip address type as a string, 
+        and any other options.
+        Returns the results of the API query.
+        """
+
+        #validate parameters
+        validType = ['HtranDestinationNode', 'HtranProxy', 'HtranProxy', 'LegitimateCompromised', 'Parking', 'PopularSite', 'SharedWebHost', 'Sinkholed', 'TorProxy']
+        if searchFilter not in self.validFilter:
+            raise Exception("Invalid search filter")
+        if iptype not in validType:
+            raise Exception("Invalid email IP type: " + iptype)
+
+        label = iptype
+
+        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        result = self.request(query)
+
+        return result
+    #end SearchIPType()
+
+
+
 
 
 #===================================
@@ -904,6 +1127,7 @@ if __name__ == "__main__":
     parser.add_argument( '--custkey', '-k', type=str, help="API Customer Key", default=None)
     parser.add_argument( '--write', '-w', action='store_true', default=False, help='Write the API config to the file specified by the --config option')
     parser.add_argument( '--config', '-c', type=str, help="Configuration File Name", default=defaultConfigFileName)
+    parser.add_argument( '--debug', '-b', action='store_true', default=False, help='Turn on some debug strings')
 
     #Error management is easier by specificying a group for the commands that can be used.
     #Each of these are actions/searches the script can take.
@@ -914,7 +1138,16 @@ if __name__ == "__main__":
     cmdGroup.add_argument( '--domain', '-d', type=str, help="Search for a domain", default=None)
     cmdGroup.add_argument( '--report', '-r', type=str, help="Search for a report name, e.g. CSIT-XXXX", default=None)
     cmdGroup.add_argument( '--indicator', '-n', type=str, help="Search for an indicator", default=None)
+    cmdGroup.add_argument( '--label', '-l', type=str, help="Search for a label", default=None)
     cmdGroup.add_argument( '--target', type=str, help="Search by Targeted Industry", default=None)
+    cmdGroup.add_argument( '--confidence', type=str, help="Search by Malicious Confidence", default=None)
+    cmdGroup.add_argument( '--killchain', type=str, help="Search by kill chain stage", default=None)
+    cmdGroup.add_argument( '--malware', type=str, help="Search by malware family", default=None)
+    cmdGroup.add_argument( '--active', action='store_true', help="Get confirmed active indicators")
+    cmdGroup.add_argument( '--threat', type=str, help="Search by threat type", default=None)
+    cmdGroup.add_argument( '--domaintype', type=str, help="Search by domain type", default=None)
+    cmdGroup.add_argument( '--iptype', type=str, help="Search by IP Type", default=None)
+    cmdGroup.add_argument( '--emailtype', type=str, help="Search by email address type", default=None)
     cmdGroup.add_argument( '--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument( '--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
 
@@ -942,7 +1175,7 @@ if __name__ == "__main__":
         (custid, custkey) = readConfig( args.config )
 
     #Create the API object 
-    api_obj = CSIntelAPI(custid, custkey)
+    api_obj = CSIntelAPI(custid, custkey, args.debug)
 
     # Check to see if config in memory should be written to disk
     if args.write:
@@ -968,8 +1201,35 @@ if __name__ == "__main__":
     if args.indicator is not None: #generic indicator search
         result = api_obj.SearchIndicatorMatch( args.indicator )
 
+    if args.label is not None: # generic label search
+        result = api_obj.SearchLabel( args.label )
+
     if args.target is not None: #search targeted industry
         result = api_obj.SearchTarget( args.target )
+
+    if args.confidence is not None: #search malicious confidence
+        result = api_obj.SearchConfidence( args.confidence )
+
+    if args.killchain is not None: #search by kill chain stage
+        result = api_obj.SearchKillChain( args.killchain )
+
+    if args.malware is not None: #search by malware family
+        result = api_obj.SearchMalware( args.malware )
+
+    if args.active is not None: #search for confirmed active malware
+        result = api_obj.SearchActive()
+
+    if args.threat is not None: #search by threat type
+        result = api_obj.SearchThreatType( args.threat )
+
+    if args.domaintype is not None: #search by domain type
+        result = api_obj.SearchDomainType( args.domaintype )
+
+    if args.iptype is not None: #search by IP Address type
+        result = api_obj.SearchIPType( args.iptype )
+
+    if args.emailtype is not None: #search by email type
+        result = api_obj.SearchEmailType( args.emailtype )
 
     if args.day is not None: #grab indicators for the last day
         result = api_obj.SearchLastDay()
