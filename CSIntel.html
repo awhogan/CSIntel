@@ -7,7 +7,7 @@
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
 <tr bgcolor="#7799ee">
 <td valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>CSIntel</strong></big></big> (version 0.3)</font></td
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>CSIntel</strong></big></big> (version 0.4)</font></td
 ><td align=right valign=bottom
 ><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/Users/adam/Documents/python/CSIntel/CSIntel.py">/Users/adam/Documents/python/CSIntel/CSIntel.py</a></font></td></tr></table>
     <p><tt>This&nbsp;file&nbsp;will&nbsp;act&nbsp;as&nbsp;a&nbsp;Python&nbsp;API&nbsp;for&nbsp;CrowdStrike's&nbsp;Threat&nbsp;Intelligence&nbsp;API.&nbsp;It&nbsp;was&nbsp;built&nbsp;to&nbsp;make&nbsp;it<br>
@@ -126,6 +126,7 @@ JSON&nbsp;received&nbsp;from&nbsp;the&nbsp;API&nbsp;request.&nbsp;Altenatively&n
 &nbsp;<br>
 Examples<br>
 ==========<br>
+Output&nbsp;obfuscated.<br>
 &nbsp;<br>
 Tell&nbsp;me&nbsp;about&nbsp;Rocket&nbsp;Kitten.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&gt;./CSIntel.py&nbsp;--actor&nbsp;rocketkitten<br>
@@ -133,29 +134,22 @@ Tell&nbsp;me&nbsp;about&nbsp;Rocket&nbsp;Kitten.<br>
 &nbsp;<br>
 Get&nbsp;all&nbsp;intel&nbsp;data&nbsp;that&nbsp;has&nbsp;been&nbsp;updated&nbsp;in&nbsp;the&nbsp;last&nbsp;24&nbsp;hours&nbsp;and&nbsp;print&nbsp;all&nbsp;indicators&nbsp;returned<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&gt;./CSIntel.py&nbsp;--day&nbsp;--out&nbsp;indicators<br>
-&nbsp;&nbsp;&nbsp;&nbsp;hash_md5:297bea792870a2433944a1ea8bcaf196:Malware/njRAT:MaliciousConfidence/High:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;hash_md5:df12de91be850692e24dc6b9ea3f4645:Malware/njRAT:MaliciousConfidence/High:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;hash_sha1:3b9dde2478c42576f87506dfe0aeca921dd42a0f:Malware/njRAT:MaliciousConfidence/High:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;hash_sha1:4952afe964e304a4ab74158b1bf84e1e74ef05cb:Malware/njRAT:MaliciousConfidence/High:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;ip_address:178.67.252.5:ThreatType/Suspicious:IpAddressType/TorProxy:<br>
-&nbsp;&nbsp;&nbsp;&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;hash_md5:XXXXXXXXXXXXXXXXXXXXXXXXXX:Malware/njRAT:MaliciousConfidence/High:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...<br>
 &nbsp;<br>
 Having&nbsp;found&nbsp;an&nbsp;interesting&nbsp;IP&nbsp;address,&nbsp;search&nbsp;CrowdStrike's&nbsp;API&nbsp;for&nbsp;it&nbsp;and&nbsp;return&nbsp;if&nbsp;any&nbsp;threat<br>
 actors&nbsp;have&nbsp;been&nbsp;associated&nbsp;with&nbsp;it.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&gt;./CSIntel.py&nbsp;--ip&nbsp;211.230.232.221&nbsp;--out&nbsp;actors<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;./CSIntel.py&nbsp;--ip&nbsp;XXX.XXX.XXX.XXX&nbsp;--out&nbsp;actors<br>
 &nbsp;&nbsp;&nbsp;&nbsp;WETPANDA<br>
 &nbsp;<br>
 Search&nbsp;the&nbsp;same&nbsp;IP&nbsp;address&nbsp;to&nbsp;see&nbsp;if&nbsp;it&nbsp;has&nbsp;been&nbsp;discussed&nbsp;in&nbsp;any&nbsp;Intelligence&nbsp;Reports.<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&gt;./CSIntel.py&nbsp;--ip&nbsp;211.230.232.221&nbsp;--out&nbsp;reports<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&gt;./CSIntel.py&nbsp;--ip&nbsp;XXX.XXX.XXX.XXX&nbsp;--out&nbsp;reports<br>
 &nbsp;&nbsp;&nbsp;&nbsp;CSIR-13017<br>
 &nbsp;&nbsp;&nbsp;&nbsp;CSIT-13051<br>
 &nbsp;<br>
 Search&nbsp;a&nbsp;specified&nbsp;report&nbsp;and&nbsp;print&nbsp;all&nbsp;hashes&nbsp;associated&nbsp;with&nbsp;it<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&gt;./CSIntel.py&nbsp;&nbsp;--report&nbsp;CSIR-13017&nbsp;--out&nbsp;hashes<br>
-&nbsp;&nbsp;&nbsp;&nbsp;f4971892bdedbff4aa0cc8c63fcf85f2c8bfe364d76769cadd70d128a372a481<br>
-&nbsp;&nbsp;&nbsp;&nbsp;63dbabdf27f92b29597ea4fbeacb1d7fde058d8d<br>
-&nbsp;&nbsp;&nbsp;&nbsp;391b63a12332cdb7384d4183c8693153c683ed8afd6a8933b87a1eea88cb107a<br>
-&nbsp;&nbsp;&nbsp;&nbsp;6ce07e229a91953410ae972343d14e9d9a2afbe1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX<br>
 &nbsp;&nbsp;&nbsp;&nbsp;...<br>
 &nbsp;<br>
 &nbsp;<br>
@@ -441,7 +435,7 @@ to&nbsp;read&nbsp;an&nbsp;existing&nbsp;config&nbsp;file.</tt></dd></dl>
 <td width="100%"><strong>CSconfigSection</strong> = 'CrowdStrikeIntelAPI'<br>
 <strong>__author__</strong> = 'Adam Hogan'<br>
 <strong>__email__</strong> = 'adam.hogan@crowdstrike.com'<br>
-<strong>__version__</strong> = 0.3<br>
+<strong>__version__</strong> = 0.4<br>
 <strong>defaultConfigFileName</strong> = '/Users/adam/.csintel.ini'<br>
 <strong>host</strong> = 'https://intelapi.crowdstrike.com/indicator/v1/search/'<br>
 <strong>validDomainType</strong> = ['Actor Controlled', 'DGA', 'DynamicDNS', 'DynamicDNS/Afraid', 'DynamicDNS/DYN', 'DynamicDNS/Hostinger', 'DynamicDNS/noIP', 'DynamicDNS/Oray', 'KnownGood', 'LegitimateCompromised', 'PhishingDomain', 'Sinkholed', 'StragegicWebCompromise', 'Unregistered']<br>

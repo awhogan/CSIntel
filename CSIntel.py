@@ -117,6 +117,7 @@ JSON received from the API request. Altenatively you can specify:
 
 Examples
 ==========
+Output obfuscated.
 
 Tell me about Rocket Kitten.
     >./CSIntel.py --actor rocketkitten
@@ -124,29 +125,22 @@ Tell me about Rocket Kitten.
 
 Get all intel data that has been updated in the last 24 hours and print all indicators returned
     >./CSIntel.py --day --out indicators
-    hash_md5:297bea792870a2433944a1ea8bcaf196:Malware/njRAT:MaliciousConfidence/High:
-    hash_md5:df12de91be850692e24dc6b9ea3f4645:Malware/njRAT:MaliciousConfidence/High:
-    hash_sha1:3b9dde2478c42576f87506dfe0aeca921dd42a0f:Malware/njRAT:MaliciousConfidence/High:
-    hash_sha1:4952afe964e304a4ab74158b1bf84e1e74ef05cb:Malware/njRAT:MaliciousConfidence/High:
-    ip_address:178.67.252.5:ThreatType/Suspicious:IpAddressType/TorProxy:
-    ...
+    hash_md5:XXXXXXXXXXXXXXXXXXXXXXXXXX:Malware/njRAT:MaliciousConfidence/High:
+     ...
 
 Having found an interesting IP address, search CrowdStrike's API for it and return if any threat
 actors have been associated with it.
-    >./CSIntel.py --ip 211.230.232.221 --out actors
+    >./CSIntel.py --ip XXX.XXX.XXX.XXX --out actors
     WETPANDA
 
 Search the same IP address to see if it has been discussed in any Intelligence Reports.
-    >./CSIntel.py --ip 211.230.232.221 --out reports
+    >./CSIntel.py --ip XXX.XXX.XXX.XXX --out reports
     CSIR-13017
     CSIT-13051
 
 Search a specified report and print all hashes associated with it
     >./CSIntel.py  --report CSIR-13017 --out hashes
-    f4971892bdedbff4aa0cc8c63fcf85f2c8bfe364d76769cadd70d128a372a481
-    63dbabdf27f92b29597ea4fbeacb1d7fde058d8d
-    391b63a12332cdb7384d4183c8693153c683ed8afd6a8933b87a1eea88cb107a
-    6ce07e229a91953410ae972343d14e9d9a2afbe1
+    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     ...
 
 
