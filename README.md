@@ -28,54 +28,54 @@ You can also see the examples included within for the simple functions that are 
 the CLI commands.
 
 
-usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
-                  [--config CONFIG] [--debug]
-                  (--actor ACTOR | --actors ACTORS | --ip IP | --domain DOMAIN | --report REPORT | --indicator INDICATOR | --label LABEL | --target TARGET | --confidence CONFIDENCE | --killchain KILLCHAIN | --malware MALWARE | --active | --threat THREAT | --domaintype DOMAINTYPE | --day | --week)
-                  [--out {all,indicators,hashes,domains,ips,actors,reports}]
-                  [--related]
+    usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
+                      [--config CONFIG] [--debug]
+                      (--actor ACTOR | --actors ACTORS | --ip IP | --domain DOMAIN | --report REPORT | --indicator INDICATOR | --label LABEL | --target TARGET | --confidence CONFIDENCE | --killchain KILLCHAIN | --malware MALWARE | --active | --threat THREAT | --domaintype DOMAINTYPE | --day | --week)
+                      [--out {all,indicators,hashes,domains,ips,actors,reports}]
+                      [--related]
 
-CS Intel API - This program can be executed directly to work with
-CrowdStrike's Threat Intel API or be imported into other scripts to use.
+    CS Intel API - This program can be executed directly to work with
+    CrowdStrike's Threat Intel API or be imported into other scripts to use.
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --custid CUSTID, -i CUSTID
-                        API Customer ID
-  --custkey CUSTKEY, -k CUSTKEY
-                        API Customer Key
-  --write, -w           Write the API config to the file specified by the
-                        --config option
-  --config CONFIG, -c CONFIG
-                        Configuration File Name
-  --debug, -b           Turn on some debug strings
-  --actor ACTOR, -a ACTOR
-                        Search for an actor by name
-  --actors ACTORS, -s ACTORS
-                        Search for a actors by pattern
-  --ip IP, -p IP        Search for an IP address
-  --domain DOMAIN, -d DOMAIN
-                        Search for a domain
-  --report REPORT, -r REPORT
-                        Search for a report name, e.g. CSIT-XXXX
-  --indicator INDICATOR, -n INDICATOR
-                        Search for an indicator
-  --label LABEL, -l LABEL
-                        Search for a label
-  --target TARGET       Search by Targeted Industry
-  --confidence CONFIDENCE
-                        Search by Malicious Confidence
-  --killchain KILLCHAIN
-                        Search by kill chain stage
-  --malware MALWARE     Search by malware family
-  --active              Get confirmed active indicators
-  --threat THREAT       Search by threat type
-  --domaintype DOMAINTYPE
-                        Search by domain type
-  --day                 Get all indicators that have changed in 24 hours
-  --week                Get all indicators that have changed in the past week
-  --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
-                        What should I print? Default: all
-  --related             Flag: Include related indicators.
+    optional arguments:
+      -h, --help            show this help message and exit
+      --custid CUSTID, -i CUSTID
+                            API Customer ID
+      --custkey CUSTKEY, -k CUSTKEY
+                            API Customer Key
+      --write, -w           Write the API config to the file specified by the
+                            --config option
+      --config CONFIG, -c CONFIG
+                            Configuration File Name
+      --debug, -b           Turn on some debug strings
+      --actor ACTOR, -a ACTOR
+                            Search for an actor by name
+      --actors ACTORS, -s ACTORS
+                            Search for a actors by pattern
+      --ip IP, -p IP        Search for an IP address
+      --domain DOMAIN, -d DOMAIN
+                            Search for a domain
+      --report REPORT, -r REPORT
+                            Search for a report name, e.g. CSIT-XXXX
+      --indicator INDICATOR, -n INDICATOR
+                            Search for an indicator
+      --label LABEL, -l LABEL
+                            Search for a label
+      --target TARGET       Search by Targeted Industry
+      --confidence CONFIDENCE
+                            Search by Malicious Confidence
+      --killchain KILLCHAIN
+                            Search by kill chain stage
+      --malware MALWARE     Search by malware family
+      --active              Get confirmed active indicators
+      --threat THREAT       Search by threat type
+      --domaintype DOMAINTYPE
+                            Search by domain type
+      --day                 Get all indicators that have changed in 24 hours
+      --week                Get all indicators that have changed in the past week
+      --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
+                            What should I print? Default: all
+      --related             Flag: Include related indicators.
 
 
 
