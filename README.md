@@ -77,7 +77,11 @@ the CLI commands.
                             What should I print? Default: all
       --related             Flag: Include related indicators.
 
+## Prerequisites
 
+You must also install the python library "requests."
+
+    pip install requests
 
 ## Using from the Command Line
 -------
@@ -430,6 +434,9 @@ written by: adam.hogan@crowdstrike.com
 
 Change log
 =========
+
+Version 0.4.1
+* Serious bug, identified by Wes Bateman, where every search was a search for confirmed active malware.
 
 Version 0.4
 * Changed default location for config file to ~/.csintel.ini
