@@ -435,6 +435,9 @@ written by: adam.hogan@crowdstrike.com
 Change log
 =========
 
+Version 0.4.1
+* Serious bug, identified by Wes Bateman, where every search was a search for confirmed active malware.
+
 Version 0.4
 * Changed default location for config file to ~/.csintel.ini
 * Check to see if config file exists when it's specified, more detailed errors.
