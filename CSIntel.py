@@ -1137,7 +1137,7 @@ if __name__ == "__main__":
     cmdGroup.add_argument( '--confidence', type=str, help="Search by Malicious Confidence", default=None)
     cmdGroup.add_argument( '--killchain', type=str, help="Search by kill chain stage", default=None)
     cmdGroup.add_argument( '--malware', type=str, help="Search by malware family", default=None)
-    cmdGroup.add_argument( '--active', action='store_true', help="Get confirmed active indicators")
+    cmdGroup.add_argument( '--active', action='store_true', help="Get confirmed active indicators", default=None)
     cmdGroup.add_argument( '--threat', type=str, help="Search by threat type", default=None)
     cmdGroup.add_argument( '--domaintype', type=str, help="Search by domain type", default=None)
     cmdGroup.add_argument( '--iptype', type=str, help="Search by IP Type", default=None)
@@ -1211,6 +1211,7 @@ if __name__ == "__main__":
         result = api_obj.SearchMalware( args.malware )
 
     if args.active is not None: #search for confirmed active malware
+        print "WTF LOL"
         result = api_obj.SearchActive()
 
     if args.threat is not None: #search by threat type

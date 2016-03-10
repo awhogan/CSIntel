@@ -77,7 +77,11 @@ the CLI commands.
                             What should I print? Default: all
       --related             Flag: Include related indicators.
 
+## Prerequisites
 
+You must also install the python library "requests."
+
+    pip install requests
 
 ## Using from the Command Line
 -------
