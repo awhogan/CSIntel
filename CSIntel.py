@@ -156,6 +156,7 @@ from ConfigParser import SafeConfigParser
 from urllib import urlencode
 from datetime import datetime, timedelta
 import os
+import urllib
 
 
 #Global
@@ -166,7 +167,7 @@ defaultConfigFileName = os.path.join( os.path.expanduser("~"), ".csintel.ini" )
 #setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = 0.4
+__version__ = 0.5
 
 #I should do more with this....
 #These specs from the API documentation should be used to do more input validation
@@ -329,8 +330,11 @@ class CSIntelAPI:
 
         headers = self.getHeaders() #format the API key & ID
         
+        #check for proxy information 
+        proxies = urllib.getproxies()
+
         #use requests library to pull request
-        r = requests.get( fullQuery, headers=headers ) 
+        r = requests.get( fullQuery, headers=headers, proxies=proxies ) 
 
         #Error handling for HTTP request
 
