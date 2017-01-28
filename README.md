@@ -435,6 +435,12 @@ written by: adam.hogan@crowdstrike.com
 Change log
 =========
 
+Version 0.6
+* Added the '--raw' keyword which will output raw json instead of pretty printed text.
+
+Version 0.5
+* Added proxy support using urllib. Proxy settings are automatically read from the OS settings
+
 Version 0.4.1
 * Serious bug, identified by Wes Bateman, where every search was a search for confirmed active malware.
 
