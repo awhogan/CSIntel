@@ -1125,6 +1125,7 @@ if __name__ == "__main__":
     parser.add_argument( '--custkey', '-k', type=str, help="API Customer Key", default=None)
     parser.add_argument( '--write', '-w', action='store_true', default=False, help='Write the API config to the file specified by the --config option')
     parser.add_argument( '--config', '-c', type=str, help="Configuration File Name", default=defaultConfigFileName)
+    parser.add_argument( '--raw', action='store_true', default=False, help='Raw JSON, do not print pretty')
     parser.add_argument( '--debug', '-b', action='store_true', default=False, help='Turn on some debug strings')
 
     #Error management is easier by specificying a group for the commands that can be used.
@@ -1284,6 +1285,9 @@ if __name__ == "__main__":
             print i
     else:
         #by default pretty print the whole JSON
-        pprint.pprint( data )
+        if args.raw == False:
+            pprint.pprint( data )
+        else:
+            print data
 
 #EOF
