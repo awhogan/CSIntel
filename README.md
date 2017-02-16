@@ -10,7 +10,7 @@ it into another script.
 
 Example 1: 
     
-    $> ./CSIntel.py --custid ABC --custkey DEF --day --indicators
+    $> ./CSIntel.py --custid ABC --custkey DEF --day
 
 Example 2:
 
