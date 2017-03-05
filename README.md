@@ -436,6 +436,9 @@ Change log
 =========
 Version 0.7
 * Updated the '--malware' keyword to use direct search instead of a label search.
+* First shot at adding Pagination.
+    * Added keyword '--perPage' that lets you specify how many results you want.
+    * Added keyword '--page' that lets you specify which page of results (if the total number of indicators is greater than your perPage value).
 
 Version 0.6
 * Added the '--raw' keyword which will output raw json instead of pretty printed text.
