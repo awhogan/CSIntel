@@ -434,6 +434,8 @@ written by: adam.hogan@crowdstrike.com
 
 Change log
 =========
+Version 0.7
+* Updated the '--malware' keyword to use direct search instead of a label search.
 
 Version 0.6
 * Added the '--raw' keyword which will output raw json instead of pretty printed text.

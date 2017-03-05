@@ -167,7 +167,7 @@ defaultConfigFileName = os.path.join( os.path.expanduser("~"), ".csintel.ini" )
 #setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = 0.6
+__version__ = 0.7
 
 #I should do more with this....
 #These specs from the API documentation should be used to do more input validation
@@ -759,11 +759,13 @@ class CSIntelAPI:
         #validate parameters
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter")
+       
+        encodedargs = ""
+        if any(kwargs):
+            encodedargs = "&" + self.getURLParams(**kwargs)
+        
+        query = "malware_family?" + searchFilter + "=" + malware + encodedargs
 
-        #append chain to label type
-        label = "malware_families/" + malware
-
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
         result = self.request(query)
 
         return result
