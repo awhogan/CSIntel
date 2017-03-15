@@ -167,7 +167,7 @@ defaultConfigFileName = os.path.join( os.path.expanduser("~"), ".csintel.ini" )
 #setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = 0.6
+__version__ = 0.7
 
 #I should do more with this....
 #These specs from the API documentation should be used to do more input validation
@@ -197,11 +197,12 @@ def readConfig(fileName=None):
     section = CSconfigSection
     custid = parser.get(section, "custid")
     custkey = parser.get(section, "custkey")
+    perpage = parser.get(section, "perpage")
 
     #TODO might need error checking on what is or isn't being pulled
     #from the file down the road. 
 
-    return (custid, custkey)
+    return (custid, custkey, perpage)
 #end readConfig()
 
 ######################################################################
@@ -242,7 +243,7 @@ class CSIntelAPI:
     """
 
 
-    def __init__(self, custid=None, custkey=None, debug=False):
+    def __init__(self, custid=None, custkey=None, perpage=None, debug=False):
         """
         Intit funciton for the CS Intel API object - pass it the API customer ID and
         customer key to create it. 
@@ -258,6 +259,7 @@ class CSIntelAPI:
         #pull some global settings for object reference
         self.configSection = CSconfigSection #config file section title
         self.host = host #hostname of where to query API 
+        self.perpage = perpage
 
         #set API valid terms
         #should be used more for syntax validation.
@@ -292,6 +294,7 @@ class CSIntelAPI:
         parser.add_section( section )
         parser.set(section, 'custid', self.custid)
         parser.set(section, 'custkey', self.custkey)
+        parser.set(section, 'perpage', self.perPage)
 
         #write to disk
         f = open(fileName, "w")
@@ -362,7 +365,6 @@ class CSIntelAPI:
 
         query = urlencode(kwargs) 
         return query
-    #end getIndicatorURL()
 
     def getActorQuery(self, actor, searchFilter="equal", **kwargs):
         """
@@ -397,7 +399,7 @@ class CSIntelAPI:
         Any other keywords passed to the function will be encoded in the 
         URL request - in case you want to filter or sort, for example.
         """
-        query = self.getActorQuery(actor, **kwargs)
+        query = self.getActorQuery(actor, perPage=self.perpage, **kwargs)
         result = self.request(query)
         return result
     def SearchActorMatch(self, actor, **kwargs):
@@ -407,7 +409,7 @@ class CSIntelAPI:
         Any other keywords passed to the function will be encoded in the 
         URL request - in case you want to filter or sort, for example.
         """
-        query = self.getActorQuery(actor, searchFilter="match", **kwargs)
+        query = self.getActorQuery(actor, searchFilter="match", perPage=self.perpage, **kwargs)
         result = self.request(query)
         return result
 
@@ -437,7 +439,7 @@ class CSIntelAPI:
         """
 
         #build URL query 
-        query = self.getIndicatorQuery(indicator, **kwargs)
+        query = self.getIndicatorQuery(indicator, perPage=self.perpage,  **kwargs)
         #search API
         result = self.request(query)
         #return results
@@ -449,7 +451,7 @@ class CSIntelAPI:
         Search the API for an indicator pattern.
         """
 
-        query = self.getIndicatorQuery(indicator, **kwargs)
+        query = self.getIndicatorQuery(indicator, perPage=self.perpage, **kwargs)
         result = self.request(query)
         return result
     #end SearchIndicatorMatch()
@@ -459,7 +461,7 @@ class CSIntelAPI:
         Search the API for an IP address
         """
 
-        query = self.getIndicatorQuery(ip, searchFilter="match", type='ip_address')
+        query = self.getIndicatorQuery(ip, searchFilter="match", type='ip_address', perPage=self.perpage)
         result = self.request(query)
         return result
     #end SearchIP()
@@ -469,7 +471,7 @@ class CSIntelAPI:
         Search the API for a domain
         """
 
-        query = self.getIndicatorQuery(domain, searchFilter="match", type='domain')
+        query = self.getIndicatorQuery(domain, searchFilter="match", type='domain', perPage = self.perpage)
         result = self.request(query)
         return result
     #end SearchDomain()
@@ -479,7 +481,7 @@ class CSIntelAPI:
         Search the API for a Mutex name
         """
         
-        query = self.getIndicatorQuery(mutex, searchFilter="match", type='mutex_name')
+        query = self.getIndicatorQuery(mutex, searchFilter="match", type='mutex_name', perPage=self.perpage)
         result = self.request(query)
         return result
     #end SearchMutex() 
@@ -503,7 +505,7 @@ class CSIntelAPI:
             raise Exception("You sure that hash was right?")
 
         #build query to search for hash by type
-        query = self.getIndicatorQuery(myhash, type=htype)
+        query = self.getIndicatorQuery(myhash, type=htype, perPage=self.perpage)
         #search API 
         result = self.request(query)
         return result
@@ -538,7 +540,7 @@ class CSIntelAPI:
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter for last_updated")
 
-        query = self.getLastUpdatedQuery(date, searchFilter, **kwargs)
+        query = self.getLastUpdatedQuery(date, searchFilter, perPage=self.perpage, **kwargs)
 
         result = self.request(query)
 
@@ -615,7 +617,7 @@ class CSIntelAPI:
         Pass the report name as a string, and any other options.
         Returns the results of the API query.
         """
-        query = self.GetReportQuery(report, searchFilter, **kwargs)
+        query = self.GetReportQuery(report, searchFilter, perPage=self.perpage, **kwargs)
         result = self.request(query)
 
         return result
@@ -639,7 +641,7 @@ class CSIntelAPI:
         #append industry
         label = "Target/" + target
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
         result = self.request(query)
 
         return result
@@ -691,7 +693,7 @@ class CSIntelAPI:
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter")
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
         result = self.request(query)
 
         return result
@@ -716,7 +718,7 @@ class CSIntelAPI:
         #append industry
         label = "MaliciousConfidence/" + confidence
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
         result = self.request(query)
 
         return result
@@ -741,7 +743,7 @@ class CSIntelAPI:
         #append chain to label type
         label = "kill_chain/" + chain
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
         result = self.request(query)
 
         return result
@@ -759,11 +761,13 @@ class CSIntelAPI:
         #validate parameters
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter")
+       
+        encodedargs = ""
+        if any(kwargs):
+            encodedargs = "&" + self.getURLParams(**kwargs)
+        
+        query = "malware_family?" + searchFilter + "=" + malware + encodedargs
 
-        #append chain to label type
-        label = "malware_families/" + malware
-
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
         result = self.request(query)
 
         return result
@@ -1121,8 +1125,10 @@ if __name__ == "__main__":
 
     #Let's set this up to parse setup config and other arguments from the CLI
     parser = argparse.ArgumentParser( description="CS Intel API - This program can be executed directly to work with CrowdStrike's Threat Intel API or be imported into other scripts to use.")
-    parser.add_argument( '--custid', '-i', type=str, help="API Customer ID", default=None)
-    parser.add_argument( '--custkey', '-k', type=str, help="API Customer Key", default=None)
+    parser.add_argument( '--custid', type=str, help="API Customer ID", default=None)
+    parser.add_argument( '--custkey', type=str, help="API Customer Key", default=None)
+    parser.add_argument( '--perPage', '-p', type=str, help="How many indicators per page?", default = "100") 
+    parser.add_argument( '--Page', type=str, help="Page number of results to get.", default = "1") 
     parser.add_argument( '--write', '-w', action='store_true', default=False, help='Write the API config to the file specified by the --config option')
     parser.add_argument( '--config', '-c', type=str, help="Configuration File Name", default=defaultConfigFileName)
     parser.add_argument( '--raw', action='store_true', default=False, help='Raw JSON, do not print pretty')
@@ -1133,10 +1139,10 @@ if __name__ == "__main__":
     cmdGroup = parser.add_mutually_exclusive_group(required=True)
     cmdGroup.add_argument( '--actor', '-a', type=str, help="Search for an actor by name", default=None)
     cmdGroup.add_argument( '--actors', '-s', type=str, help="Search for a actors by pattern", default=None)
-    cmdGroup.add_argument( '--ip', '-p', type=str, help="Search for an IP address", default=None)
-    cmdGroup.add_argument( '--domain', '-d', type=str, help="Search for a domain", default=None)
-    cmdGroup.add_argument( '--report', '-r', type=str, help="Search for a report name, e.g. CSIT-XXXX", default=None)
-    cmdGroup.add_argument( '--indicator', '-n', type=str, help="Search for an indicator", default=None)
+    cmdGroup.add_argument( '--ip', type=str, help="Search for an IP address", default=None)
+    cmdGroup.add_argument( '--domain', type=str, help="Search for a domain", default=None)
+    cmdGroup.add_argument( '--report', type=str, help="Search for a report name, e.g. CSIT-XXXX", default=None)
+    cmdGroup.add_argument( '--indicator', '-i', type=str, help="Search for an indicator", default=None)
     cmdGroup.add_argument( '--label', '-l', type=str, help="Search for a label", default=None)
     cmdGroup.add_argument( '--target', type=str, help="Search by Targeted Industry", default=None)
     cmdGroup.add_argument( '--confidence', type=str, help="Search by Malicious Confidence", default=None)
@@ -1171,10 +1177,10 @@ if __name__ == "__main__":
         custkey = args.custkey
     else: 
         # no ID and key from argument, get them from config file
-        (custid, custkey) = readConfig( args.config )
+        (custid, custkey, perpage) = readConfig( args.config )
 
     #Create the API object 
-    api_obj = CSIntelAPI(custid, custkey, args.debug)
+    api_obj = CSIntelAPI(custid, custkey, args.perPage, args.debug)
 
     # Check to see if config in memory should be written to disk
     if args.write:
