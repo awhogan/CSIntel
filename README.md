@@ -118,6 +118,8 @@ Once you are setup to pass your Customer ID and Key you can start searching the 
 
 ##Search
 
+Search Options
+
 ### Actor(s)
 * --actor
 
@@ -134,6 +136,7 @@ Query a pattern and return all actors that match it.
     --actors kitten
 
 ###IP
+
 * --ip
 
 Search for an IP address.
@@ -440,6 +443,9 @@ written by: adam.hogan@crowdstrike.com
 
 Change log
 =========
+Version 0.7.1
+* Added the --Page option to manually specifcy differnt pages if the number of results is larger than your perPage setting. For real this time.
+
 Version 0.7
 * Updated the '--malware' keyword to use direct search instead of a label search.
 * First shot at adding Pagination.

@@ -167,7 +167,7 @@ defaultConfigFileName = os.path.join( os.path.expanduser("~"), ".csintel.ini" )
 #setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = 0.7
+__version__ = 0.7.1
 
 #I should do more with this....
 #These specs from the API documentation should be used to do more input validation
@@ -243,7 +243,7 @@ class CSIntelAPI:
     """
 
 
-    def __init__(self, custid=None, custkey=None, perpage=None, debug=False):
+    def __init__(self, custid=None, custkey=None, perpage=None, page="1", debug=False):
         """
         Intit funciton for the CS Intel API object - pass it the API customer ID and
         customer key to create it. 
@@ -260,6 +260,7 @@ class CSIntelAPI:
         self.configSection = CSconfigSection #config file section title
         self.host = host #hostname of where to query API 
         self.perpage = perpage
+        self.page = page
 
         #set API valid terms
         #should be used more for syntax validation.
@@ -399,7 +400,7 @@ class CSIntelAPI:
         Any other keywords passed to the function will be encoded in the 
         URL request - in case you want to filter or sort, for example.
         """
-        query = self.getActorQuery(actor, perPage=self.perpage, **kwargs)
+        query = self.getActorQuery(actor, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
         return result
     def SearchActorMatch(self, actor, **kwargs):
@@ -409,7 +410,7 @@ class CSIntelAPI:
         Any other keywords passed to the function will be encoded in the 
         URL request - in case you want to filter or sort, for example.
         """
-        query = self.getActorQuery(actor, searchFilter="match", perPage=self.perpage, **kwargs)
+        query = self.getActorQuery(actor, searchFilter="match", perPage=self.perpage, page=self.page,  **kwargs)
         result = self.request(query)
         return result
 
@@ -451,7 +452,7 @@ class CSIntelAPI:
         Search the API for an indicator pattern.
         """
 
-        query = self.getIndicatorQuery(indicator, perPage=self.perpage, **kwargs)
+        query = self.getIndicatorQuery(indicator, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
         return result
     #end SearchIndicatorMatch()
@@ -540,7 +541,7 @@ class CSIntelAPI:
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter for last_updated")
 
-        query = self.getLastUpdatedQuery(date, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.getLastUpdatedQuery(date, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
 
         result = self.request(query)
 
@@ -617,7 +618,7 @@ class CSIntelAPI:
         Pass the report name as a string, and any other options.
         Returns the results of the API query.
         """
-        query = self.GetReportQuery(report, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.GetReportQuery(report, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -641,7 +642,7 @@ class CSIntelAPI:
         #append industry
         label = "Target/" + target
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -693,7 +694,7 @@ class CSIntelAPI:
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter")
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -718,7 +719,7 @@ class CSIntelAPI:
         #append industry
         label = "MaliciousConfidence/" + confidence
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -743,7 +744,7 @@ class CSIntelAPI:
         #append chain to label type
         label = "kill_chain/" + chain
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -789,7 +790,7 @@ class CSIntelAPI:
         #append chain to label type
         label = "confirmedactive"
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -839,7 +840,7 @@ class CSIntelAPI:
         #append chain to label type
         label = "DomaintType/" + domain
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -864,7 +865,7 @@ class CSIntelAPI:
         #append chain to label type
         label = "EmailAddressType/" + email
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -888,7 +889,7 @@ class CSIntelAPI:
 
         label = iptype
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -1180,7 +1181,7 @@ if __name__ == "__main__":
         (custid, custkey, perpage) = readConfig( args.config )
 
     #Create the API object 
-    api_obj = CSIntelAPI(custid, custkey, args.perPage, args.debug)
+    api_obj = CSIntelAPI(custid, custkey, args.perPage, args.Page, args.debug)
 
     # Check to see if config in memory should be written to disk
     if args.write:
