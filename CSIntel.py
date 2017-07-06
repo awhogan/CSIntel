@@ -400,7 +400,7 @@ class CSIntelAPI:
         Any other keywords passed to the function will be encoded in the 
         URL request - in case you want to filter or sort, for example.
         """
-        query = self.getActorQuery(actor, perPage=self.perpage, **kwargs)
+        query = self.getActorQuery(actor, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
         return result
     def SearchActorMatch(self, actor, **kwargs):
@@ -410,7 +410,7 @@ class CSIntelAPI:
         Any other keywords passed to the function will be encoded in the 
         URL request - in case you want to filter or sort, for example.
         """
-        query = self.getActorQuery(actor, searchFilter="match", perPage=self.perpage, **kwargs)
+        query = self.getActorQuery(actor, searchFilter="match", perPage=self.perpage, page=self.page,  **kwargs)
         result = self.request(query)
         return result
 
@@ -452,7 +452,7 @@ class CSIntelAPI:
         Search the API for an indicator pattern.
         """
 
-        query = self.getIndicatorQuery(indicator, perPage=self.perpage, **kwargs)
+        query = self.getIndicatorQuery(indicator, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
         return result
     #end SearchIndicatorMatch()
@@ -618,7 +618,7 @@ class CSIntelAPI:
         Pass the report name as a string, and any other options.
         Returns the results of the API query.
         """
-        query = self.GetReportQuery(report, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.GetReportQuery(report, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -642,7 +642,7 @@ class CSIntelAPI:
         #append industry
         label = "Target/" + target
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -694,7 +694,7 @@ class CSIntelAPI:
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter")
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -719,7 +719,7 @@ class CSIntelAPI:
         #append industry
         label = "MaliciousConfidence/" + confidence
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -744,7 +744,7 @@ class CSIntelAPI:
         #append chain to label type
         label = "kill_chain/" + chain
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -790,7 +790,7 @@ class CSIntelAPI:
         #append chain to label type
         label = "confirmedactive"
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -840,7 +840,7 @@ class CSIntelAPI:
         #append chain to label type
         label = "DomaintType/" + domain
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -865,7 +865,7 @@ class CSIntelAPI:
         #append chain to label type
         label = "EmailAddressType/" + email
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
@@ -889,7 +889,7 @@ class CSIntelAPI:
 
         label = iptype
 
-        query = self.GetLabelQuery(label, searchFilter, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
         result = self.request(query)
 
         return result
