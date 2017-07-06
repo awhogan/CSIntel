@@ -440,6 +440,9 @@ written by: adam.hogan@crowdstrike.com
 
 Change log
 =========
+Version 0.7.1
+* Added the --Page option to manually specifcy differnt pages if the number of results is larger than your perPage setting. For real this time.
+
 Version 0.7
 * Updated the '--malware' keyword to use direct search instead of a label search.
 * First shot at adding Pagination.
