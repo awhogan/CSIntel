@@ -243,7 +243,7 @@ class CSIntelAPI:
     """
 
 
-    def __init__(self, custid=None, custkey=None, perpage=None, debug=False):
+    def __init__(self, custid=None, custkey=None, perpage=None, page="1", debug=False):
         """
         Intit funciton for the CS Intel API object - pass it the API customer ID and
         customer key to create it. 
@@ -260,6 +260,7 @@ class CSIntelAPI:
         self.configSection = CSconfigSection #config file section title
         self.host = host #hostname of where to query API 
         self.perpage = perpage
+        self.page = page
 
         #set API valid terms
         #should be used more for syntax validation.
@@ -540,7 +541,7 @@ class CSIntelAPI:
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter for last_updated")
 
-        query = self.getLastUpdatedQuery(date, searchFilter, perPage=self.perpage, **kwargs)
+        query = self.getLastUpdatedQuery(date, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
 
         result = self.request(query)
 
@@ -1180,7 +1181,7 @@ if __name__ == "__main__":
         (custid, custkey, perpage) = readConfig( args.config )
 
     #Create the API object 
-    api_obj = CSIntelAPI(custid, custkey, args.perPage, args.debug)
+    api_obj = CSIntelAPI(custid, custkey, args.perPage, args.Page, args.debug)
 
     # Check to see if config in memory should be written to disk
     if args.write:
