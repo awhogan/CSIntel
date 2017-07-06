@@ -118,6 +118,8 @@ Once you are setup to pass your Customer ID and Key you can start searching the 
 
 ##Search
 
+Search Options
+
 ### Actor(s)
 * --actor
 
@@ -134,6 +136,7 @@ Query a pattern and return all actors that match it.
     --actors kitten
 
 ###IP
+
 * --ip
 
 Search for an IP address.
