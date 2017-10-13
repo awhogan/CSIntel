@@ -112,6 +112,7 @@ JSON received from the API request. Altenatively you can specify:
     --out ips               -print just IP addresses
     --out actors            -print any Actors associated with the API request data
     --out reports           -print any reports associated with the API request data
+    --out IfReport
 
 
 
@@ -167,7 +168,7 @@ defaultConfigFileName = os.path.join( os.path.expanduser("~"), ".csintel.ini" )
 #setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 
 #I should do more with this....
 #These specs from the API documentation should be used to do more input validation
@@ -1157,7 +1158,7 @@ if __name__ == "__main__":
     cmdGroup.add_argument( '--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument( '--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
 
-    parser.add_argument( '--out', '-o', choices=['all', 'indicators', 'hashes', 'domains', 'ips', 'actors', 'reports'], help="What should I print? Default: all", default='all')
+    parser.add_argument( '--out', '-o', choices=['all', 'indicators', 'hashes', 'domains', 'ips', 'actors', 'reports', 'IfReport'], help="What should I print? Default: all", default='all')
     parser.add_argument( '--related', action='store_true', help="Flag: Include related indicators.", default=False)
    
     #run this and parse out the arguments
@@ -1290,6 +1291,13 @@ if __name__ == "__main__":
         for i in uniqueIps:
             #print one per line
             print i
+    elif args.out == "IfReport":
+        #print out the raw data, but only if there is an associated
+        #report with it.
+        for datum in data:
+            if len(datum['reports']) > 0:
+                print datum
+
     else:
         #by default pretty print the whole JSON
         if args.raw == False:

@@ -32,7 +32,7 @@ usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY]
                   [--perPage PERPAGE] [--Page PAGE] [--write]
                   [--config CONFIG] [--raw] [--debug]
                   (--actor ACTOR | --actors ACTORS | --ip IP | --domain DOMAIN | --report REPORT | --indicator INDICATOR | --label LABEL | --target TARGET | --confidence CONFIDENCE | --killchain KILLCHAIN | --malware MALWARE | --active | --threat THREAT | --domaintype DOMAINTYPE | --iptype IPTYPE | --emailtype EMAILTYPE | --day | --week)
-                  [--out {all,indicators,hashes,domains,ips,actors,reports}]
+                  [--out {all,indicators,hashes,domains,ips,actors,reports,IfReport}]
                   [--related]
 
 CS Intel API - This program can be executed directly to work with
@@ -77,7 +77,7 @@ optional arguments:
                         Search by email address type
   --day                 Get all indicators that have changed in 24 hours
   --week                Get all indicators that have changed in the past week
-  --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
+  --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports,IfReport}
                         What should I print? Default: all
   --related             Flag: Include related indicators.
 
@@ -400,6 +400,7 @@ JSON received from the API request. Altenatively you can specify:
     --out ips               -print just IP addresses
     --out actors            -print any Actors associated with the API request data
     --out reports           -print any reports associated with the API request data
+    --out IfReport          -print the raw data in JSON, but only for those indicators that are associated with a published report. 
 
 
 
