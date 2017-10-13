@@ -168,7 +168,7 @@ defaultConfigFileName = os.path.join( os.path.expanduser("~"), ".csintel.ini" )
 #setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = '0.7.1'
+__version__ = '0.7.2'
 
 #I should do more with this....
 #These specs from the API documentation should be used to do more input validation
@@ -1294,7 +1294,6 @@ if __name__ == "__main__":
     elif args.out == "IfReport":
         #print out the raw data, but only if there is an associated
         #report with it.
-        print "hi"
         for datum in data:
             if len(datum['reports']) > 0:
                 print datum
