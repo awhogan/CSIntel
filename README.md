@@ -444,6 +444,9 @@ written by: adam.hogan@crowdstrike.com
 
 Change log
 =========
+Version 0.7.2
+* Added the '--out IfReport' option that will output all returned indicators (in JSON) if they have an associated report.
+
 Version 0.7.1
 * Added the --Page option to manually specifcy differnt pages if the number of results is larger than your perPage setting. For real this time.
 
