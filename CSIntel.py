@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/env python3
 
 """
 This file will act as a Python API for CrowdStrike's Threat Intelligence API. It was built to make it
@@ -153,11 +153,20 @@ written by: adam.hogan@crowdstrike.com
 """
 
 import requests
-from ConfigParser import SafeConfigParser
-from urllib import urlencode
+try:        # python3
+    from configparser import SafeConfigParser
+except Exception:     # python2
+    from ConfigParser import SafeConfigParser
+try:        # python3
+    from urllib.parse import urlencode
+except Exception:
+    from urllib import urlencode
 from datetime import datetime, timedelta
 import os
-import urllib
+try:        # python3
+    import urllib.request as urllib
+except Exception:     # python2
+    import urllib
 
 
 #Global
@@ -331,7 +340,7 @@ class CSIntelAPI:
         fullQuery = self.host + query #host part doesn't change
 
         if self.debug:
-            print "fullQuery: " + fullQuery
+            print("fullQuery: " + fullQuery)
 
         headers = self.getHeaders() #format the API key & ID
         
@@ -528,7 +537,7 @@ class CSIntelAPI:
         query = "last_updated?" + searchFilter + "=" + str(date) + "&" + encodedargs
 
         if self.debug:
-            print "query: " + query
+            print("query: " + query)
 
         return query
     #end getLastUpdatedQuery
@@ -1224,7 +1233,7 @@ if __name__ == "__main__":
         result = api_obj.SearchMalware( args.malware )
 
     if args.active is not None: #search for confirmed active malware
-        print "WTF LOL"
+        print("WTF LOL")
         result = api_obj.SearchActive()
 
     if args.threat is not None: #search by threat type
@@ -1253,7 +1262,7 @@ if __name__ == "__main__":
         #get hashes form results, pass related option
         hashes = api_obj.GetHashesFromResults(data, related=args.related)
         for h in hashes:
-            print h
+            print(h)
     elif args.out == "indicators":
         #get all the indicators
         indicators = api_obj.GetIndicatorsFromResults(data, related=args.related)
@@ -1261,21 +1270,21 @@ if __name__ == "__main__":
         uniqueIndicators = set(indicators)
         #print them one per line
         for i in uniqueIndicators:
-            print i
+            print(i)
     elif args.out == "reports":
         #print any report names associated with these indicators
         reports = api_obj.GetReportsFromResults(data)
         reports.sort() #sort list
         for r in reports:
             #print one per line
-            print r
+            print(r)
     elif args.out == "domains":
         #get the domains from our results
         domains = api_obj.GetDomainsFromResults(data, related=args.related)
         domains.sort() #sort list
         #print one per line
         for d in domains:
-            print d
+            print(d)
     elif args.out == "actors":
         #print what actors are tied to these indicators
         actors = api_obj.GetActorsFromResults(data)
@@ -1283,26 +1292,26 @@ if __name__ == "__main__":
         uniqueActors = set(actors)
         for a in uniqueActors:
             #print one per line
-            print a
+            print(a)
     elif args.out == "ips":
         #get the IP addresses from our list of indicators
         ips = api_obj.GetIPsFromResults(data, related=args.related)
         uniqueIps = set(ips) #dedupe list
         for i in uniqueIps:
             #print one per line
-            print i
+            print(i)
     elif args.out == "IfReport":
         #print out the raw data, but only if there is an associated
         #report with it.
         for datum in data:
             if len(datum['reports']) > 0:
-                print datum
+                print(datum)
 
     else:
         #by default pretty print the whole JSON
         if args.raw == False:
             pprint.pprint( data )
         else:
-            print data
+            print(data)
 
 #EOF
