@@ -444,6 +444,12 @@ written by: adam.hogan@crowdstrike.com
 
 Change log
 =========
+Version 0.8
+* PEP8 compliance added by Christophe Vandeplas
+* Python 3 compliance added by Christophe Vandeplas
+* API v 2 Support
+* Deleted option - there is now a command line option to include deleted indicators.
+
 Version 0.7.2
 * Added the '--out IfReport' option that will output all returned indicators (in JSON) if they have an associated report.
 
