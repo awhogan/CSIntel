@@ -171,13 +171,13 @@ except Exception:     # python2
 
 # Global
 CSconfigSection = "CrowdStrikeIntelAPI"
-host = "https://intelapi.crowdstrike.com/indicator/v1/search/"
+host = "https://intelapi.crowdstrike.com/indicator/v2/search/"
 defaultConfigFileName = os.path.join(os.path.expanduser("~"), ".csintel.ini")
 
 # setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = '0.7.2'
+__version__ = '0.8'
 
 # I should do more with this....
 # These specs from the API documentation should be used to do more input validation
@@ -253,7 +253,7 @@ class CSIntelAPI:
         hashes = api_obj.GetHashesFromResults(data)
     """
 
-    def __init__(self, custid=None, custkey=None, perpage=None, page="1", debug=False):
+    def __init__(self, custid=None, custkey=None, perpage=None, page="1", deleted=False, debug=False):
         """
         Intit funciton for the CS Intel API object - pass it the API customer ID and
         customer key to create it.
@@ -271,6 +271,7 @@ class CSIntelAPI:
         self.host = host                      # hostname of where to query API
         self.perpage = perpage
         self.page = page
+        self.deleted = deleted
 
         # set API valid terms
         # should be used more for syntax validation.
@@ -335,7 +336,7 @@ class CSIntelAPI:
         if not self.custid or not self.custkey:
             raise Exception('Customer ID and Customer Key are required')
 
-        fullQuery = self.host + query   # host part doesn't change
+        fullQuery = self.host + query   
 
         if self.debug:
             print("fullQuery: " + fullQuery)
@@ -407,7 +408,7 @@ class CSIntelAPI:
         Any other keywords passed to the function will be encoded in the
         URL request - in case you want to filter or sort, for example.
         """
-        query = self.getActorQuery(actor, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.getActorQuery(actor, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
         return result
 
@@ -418,7 +419,7 @@ class CSIntelAPI:
         Any other keywords passed to the function will be encoded in the
         URL request - in case you want to filter or sort, for example.
         """
-        query = self.getActorQuery(actor, searchFilter="match", perPage=self.perpage, page=self.page, **kwargs)
+        query = self.getActorQuery(actor, searchFilter="match", perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
         return result
 
@@ -447,7 +448,7 @@ class CSIntelAPI:
         """
 
         # build URL query
-        query = self.getIndicatorQuery(indicator, perPage=self.perpage, **kwargs)
+        query = self.getIndicatorQuery(indicator, perPage=self.perpage, include_deleted=self.deleted, **kwargs)
         # search API
         result = self.request(query)
         # return results
@@ -459,7 +460,7 @@ class CSIntelAPI:
         Search the API for an indicator pattern.
         """
 
-        query = self.getIndicatorQuery(indicator, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.getIndicatorQuery(indicator, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
         return result
     # end SearchIndicatorMatch()
@@ -469,7 +470,7 @@ class CSIntelAPI:
         Search the API for an IP address
         """
 
-        query = self.getIndicatorQuery(ip, searchFilter="match", type='ip_address', perPage=self.perpage)
+        query = self.getIndicatorQuery(ip, searchFilter="match", type='ip_address', perPage=self.perpage, include_deleted=self.deleted)
         result = self.request(query)
         return result
     # end SearchIP()
@@ -479,7 +480,7 @@ class CSIntelAPI:
         Search the API for a domain
         """
 
-        query = self.getIndicatorQuery(domain, searchFilter="match", type='domain', perPage=self.perpage)
+        query = self.getIndicatorQuery(domain, searchFilter="match", type='domain', perPage=self.perpage, include_deleted=self.deleted)
         result = self.request(query)
         return result
     # end SearchDomain()
@@ -548,7 +549,7 @@ class CSIntelAPI:
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter for last_updated")
 
-        query = self.getLastUpdatedQuery(date, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.getLastUpdatedQuery(date, searchFilter, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
 
         result = self.request(query)
 
@@ -624,7 +625,7 @@ class CSIntelAPI:
         Pass the report name as a string, and any other options.
         Returns the results of the API query.
         """
-        query = self.GetReportQuery(report, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.GetReportQuery(report, searchFilter, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
 
         return result
@@ -647,7 +648,7 @@ class CSIntelAPI:
         # append industry
         label = "Target/" + target
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
 
         return result
@@ -698,7 +699,7 @@ class CSIntelAPI:
         if searchFilter not in self.validFilter:
             raise Exception("Invalid search filter")
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
 
         return result
@@ -722,7 +723,7 @@ class CSIntelAPI:
         # append industry
         label = "MaliciousConfidence/" + confidence
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
 
         return result
@@ -746,7 +747,7 @@ class CSIntelAPI:
         # append chain to label type
         label = "kill_chain/" + chain
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
 
         return result
@@ -790,7 +791,7 @@ class CSIntelAPI:
         # append chain to label type
         label = "confirmedactive"
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
 
         return result
@@ -838,7 +839,7 @@ class CSIntelAPI:
         # append chain to label type
         label = "DomaintType/" + domain
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
 
         return result
@@ -862,7 +863,7 @@ class CSIntelAPI:
         # append chain to label type
         label = "EmailAddressType/" + email
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
 
         return result
@@ -885,7 +886,7 @@ class CSIntelAPI:
 
         label = iptype
 
-        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, **kwargs)
+        query = self.GetLabelQuery(label, searchFilter, perPage=self.perpage, page=self.page, include_deleted=self.deleted, **kwargs)
         result = self.request(query)
 
         return result
@@ -1148,6 +1149,7 @@ if __name__ == "__main__":
 
     parser.add_argument('--out', '-o', choices=['all', 'indicators', 'hashes', 'domains', 'ips', 'actors', 'reports', 'IfReport'], help="What should I print? Default: all", default='all')
     parser.add_argument('--related', action='store_true', help="Flag: Include related indicators.", default=False)
+    parser.add_argument('--deleted', action='store_true', help="Include deleted indicators.", default=False)
 
     # run this and parse out the arguments
     args = parser.parse_args()
@@ -1169,7 +1171,7 @@ if __name__ == "__main__":
         (custid, custkey, perpage) = readConfig(args.config)
 
     # Create the API object
-    api_obj = CSIntelAPI(custid, custkey, args.perPage, args.Page, args.debug)
+    api_obj = CSIntelAPI(custid, custkey, args.perPage, args.Page, args.deleted, args.debug)
 
     # Check to see if config in memory should be written to disk
     if args.write:
