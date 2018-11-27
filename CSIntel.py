@@ -1120,7 +1120,6 @@ if __name__ == "__main__":
     parser.add_argument('--custkey', type=str, help="API Customer Key", default=None)
     parser.add_argument('--perPage', '-p', type=str, help="How many indicators per page?", default="100")
     parser.add_argument('--Page', type=str, help="Page number of results to get.", default="1")
-    parser.add_argument('--write', '-w', action='store_true', default=False, help='Write the API config to the file specified by the --config option')
     parser.add_argument('--config', '-c', type=str, help="Configuration File Name", default=defaultConfigFileName)
     parser.add_argument('--raw', action='store_true', default=False, help='Raw JSON, do not print pretty')
     parser.add_argument('--debug', '-b', action='store_true', default=False, help='Turn on some debug strings')
@@ -1128,6 +1127,7 @@ if __name__ == "__main__":
     # Error management is easier by specificying a group for the commands that can be used.
     # Each of these are actions/searches the script can take.
     cmdGroup = parser.add_mutually_exclusive_group(required=True)
+    cmdGroup.add_argument('--write', '-w', action='store_true', default=False, help='Write the API config to the file specified by the --config option')
     cmdGroup.add_argument('--actor', '-a', type=str, help="Search for an actor by name", default=None)
     cmdGroup.add_argument('--actors', '-s', type=str, help="Search for a actors by pattern", default=None)
     cmdGroup.add_argument('--ip', type=str, help="Search for an IP address", default=None)
