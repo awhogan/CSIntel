@@ -1344,7 +1344,6 @@ if __name__ == "__main__":
         hashes = api_obj.GetHashesFromResults(data, related=args.related)
 
         for h in hashes:
-            print("Try to download:" + str(h))
             result = api_obj.MQDownloadHash(h)
             filename = h
             open(filename, 'wb').write(result.content)
