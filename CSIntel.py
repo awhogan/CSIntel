@@ -177,6 +177,7 @@ CSconfigSection = "CrowdStrikeIntelAPI"
 host = "https://intelapi.crowdstrike.com/"
 indicatorPath = "indicator/v2/search/"
 malqueryPath = "malquery/"
+reportsPath = "reports/"
 defaultConfigFileName = os.path.join(os.path.expanduser("~"), ".csintel.ini")
 
 # setup
@@ -276,6 +277,7 @@ class CSIntelAPI:
         self.host = host                      # hostname of where to query API
         self.indicatorPath = indicatorPath
         self.malqueryPath = malqueryPath
+        self.reportsPath = reportsPath
         self.perpage = perpage
         self.page = page
         self.deleted = deleted
@@ -349,6 +351,8 @@ class CSIntelAPI:
         #Host + Intel API type (e.g. indicator, malquery)
         if queryType == "indicator":
             fullQuery += self.indicatorPath
+        elif queryType == "reports":
+            fullQuery += self.reportsPath
         elif queryType == "malquery":
             fullQuery += self.malqueryPath
 
@@ -932,6 +936,42 @@ class CSIntelAPI:
 
     # end MQDownloadHash
 
+    def GetReportId(self, report):
+        #/reports/queries/reports/v1?name=CSIT-18178
+        query = "queries/reports/v1?name=" + report
+
+        searchResult= self.request(query, queryType="reports")
+
+        data = json.loads(searchResult.text)
+        ids = data['resources'][0] #TODO could return more than one...
+
+        return ids
+
+    def GetReportDownloadJSONQuery(self, report):
+        #entities/reports/v1?ids=40535
+        reportId = self.GetReportId(report)
+        query = "entities/reports/v1?ids=" + reportId
+        return query
+
+    def GetReportDownloadPDFQuery(self, report):
+        #entities/report-files/v1?ids=40535
+        reportId = self.GetReportId(report)
+        query = "entities/report-files/v1?ids=" + reportId
+        return query
+
+    def GetReportJSON(self, report, **kwargs):
+        reportId = self.GetReportId(report)
+        query = self.GetReportDownloadJSONQuery(reportId, **kwargs)
+
+        result = self.request(query, queryType="reports")
+        return result
+
+    def GetReportPDF(self, report, **kwargs):
+        query = self.GetReportDownloadPDFQuery(report, **kwargs)
+
+        result = self.request(query, queryType="reports")
+        return result
+
 # ===================================
 # Output
 # ===================================
@@ -1186,7 +1226,9 @@ if __name__ == "__main__":
     cmdGroup.add_argument('--emailtype', type=str, help="Search by email address type", default=None)
     cmdGroup.add_argument('--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument('--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
-    cmdGroup.add_argument('--download', type=str, help="Download a file by hash from Malquery", default=None)
+    cmdGroup.add_argument('--download', '-f', type=str, help="Download a file by hash from Malquery", default=None)
+    cmdGroup.add_argument('--downloadReport', '-R', type=str, help="Download a report, e.g. CSIT-XXXX", default=None)
+    cmdGroup.add_argument('--downloadReportFiles', '-F', type=str, help="Download files associated with a report name, e.g. CSIT-XXXX", default=None)
 
 
     parser.add_argument('--out', '-o', choices=['all', 'indicators', 'hashes', 'domains', 'ips', 'actors', 'reports', 'IfReport'], help="What should I print? Default: all", default='all')
@@ -1281,17 +1323,38 @@ if __name__ == "__main__":
 
     if args.download is not None:       # try to download file from MQ
         result = api_obj.MQDownloadHash(args.download)
-
         #print(result.headers.get('content-type')) #debug
-
         filename = args.download    #name file the hash
-
         open(filename, 'wb').write(result.content)
-
         #exit
         raise SystemExit
 
+
+    if args.downloadReport is not None:
+        result = api_obj.GetReportPDF(args.downloadReport)
+        filename = args.downloadReport + ".pdf"
+        open(filename, 'wb').write(result.content)
+        raise SystemExit
+
+
+    if args.downloadReportFiles is not None:
+        
+        result = api_obj.SearchReport(args.downloadReportFiles)
+        data = json.loads(result.text)
+        hashes = api_obj.GetHashesFromResults(data, related=args.related)
+
+        for h in hashes:
+            print("Try to download:" + str(h))
+            result = api_obj.MQDownloadHash(h)
+            filename = h
+            open(filename, 'wb').write(result.content)
+            
+        raise SystemExit
+
+
+
     # load the raw JSON into python friendly structure
+    print(result.text)
     data = json.loads(result.text)
 
     # print results
