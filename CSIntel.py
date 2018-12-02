@@ -1,157 +1,5 @@
 #!/usr/bin/env python3
 
-"""
-This file will act as a Python API for CrowdStrike's Threat Intelligence API. It was built to make it
-easy to use the Intel API.
-
-This module can be used one of two ways: by executing it directly from the command line or by importing
-it into another script.
-
-Example 1:
-    $> ./CSIntel.py --custid ABC --custkey DEF --day --indicators
-
-Example 2:
-    #!/usr/bin/python
-    import CSIntel
-    api_obj = CSIntel.CSIntelAPI(custid, custkey)
-    results = api_obj.SearchLastWeek()
-
-To learn more about the functions you can use when importing this file see the included python
-documentation:
-    $> pydoc ./CSIntel.py
-
-You can also see the examples included within for the simple functions that are used to enable
-the CLI commands.
-
-The command line usage is shown below:
-
--------------------------------------------------------------------------------------------------------
-usage: CSIntel.py [-h] [--custid CUSTID] [--custkey CUSTKEY] [--write]
-                  [--config CONFIG] [--debug]
-                  (--actor ACTOR | --actors ACTORS | --ip IP | --domain DOMAIN | --report REPORT | --indicator INDICATOR | --label LABEL | --target TARGET | --confidence CONFIDENCE | --killchain KILLCHAIN | --malware MALWARE | --active | --threat THREAT | --domaintype DOMAINTYPE | --day | --week)
-                  [--out {all,indicators,hashes,domains,ips,actors,reports}]
-                  [--related]
-
-CS Intel API - This program can be executed directly to work with
-CrowdStrike's Threat Intel API or be imported into other scripts to use.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --custid CUSTID, -i CUSTID
-                        API Customer ID
-  --custkey CUSTKEY, -k CUSTKEY
-                        API Customer Key
-  --write, -w           Write the API config to the file specified by the
-                        --config option
-  --config CONFIG, -c CONFIG
-                        Configuration File Name
-  --debug, -b           Turn on some debug strings
-  --actor ACTOR, -a ACTOR
-                        Search for an actor by name
-  --actors ACTORS, -s ACTORS
-                        Search for a actors by pattern
-  --ip IP, -p IP        Search for an IP address
-  --domain DOMAIN, -d DOMAIN
-                        Search for a domain
-  --report REPORT, -r REPORT
-                        Search for a report name, e.g. CSIT-XXXX
-  --indicator INDICATOR, -n INDICATOR
-                        Search for an indicator
-  --label LABEL, -l LABEL
-                        Search for a label
-  --target TARGET       Search by Targeted Industry
-  --confidence CONFIDENCE
-                        Search by Malicious Confidence
-  --killchain KILLCHAIN
-                        Search by kill chain stage
-  --malware MALWARE     Search by malware family
-  --active              Get confirmed active indicators
-  --threat THREAT       Search by threat type
-  --domaintype DOMAINTYPE
-                        Search by domain type
-  --day                 Get all indicators that have changed in 24 hours
-  --week                Get all indicators that have changed in the past week
-  --out {all,indicators,hashes,domains,ips,actors,reports}, -o {all,indicators,hashes,domains,ips,actors,reports}
-                        What should I print? Default: all
-  --related             Flag: Include related indicators.
-
--------------------------------------------------------------------------------------------------------
-
-Using from the Command Line
--------
-
-The first step to using this from the Command Line is to make sure you're passing your Customer ID
-and your Customer Key. There are two ways you can do this:
-
-    A) Pass your Customer ID and Key from the command line:
-        $> ./CSintel.py --custid <Customer ID> --custkey <Customer Key>
-    B) Place your Customer ID and Key in a config file to be read by the script. By default the file
-    expected is ~/.csintel.ini
-
-    In order to create this config file you can either write it explicitly or save the config from the
-    command line executation.
-        $> ./CSintel.py --custid ABCD --custkey EFGH --write
-
-    This will save Customer ID & Key to the default config file (csintel.ini). If you wish to specify
-    a different file you can pass that: --write --config diffFile.ini
-
-    If you want to manually write the config file it follows this layout:
-
-        [CrowdStrikeIntelAPI]
-        custid = ABCD
-        custkey = EFGH
-
-Once you are setup to pass your Customer ID and Key you can start searching the Threat Intel API.
-
-You can also specify what output you want to receive. By default these methods will pretty print all
-JSON received from the API request. Altenatively you can specify:
-
-    --out indicators        -print all indicators
-    --out hashes            -print just the hashes
-    --out domains           -print just domains
-    --out ips               -print just IP addresses
-    --out actors            -print any Actors associated with the API request data
-    --out reports           -print any reports associated with the API request data
-    --out IfReport
-
-
-
-Examples
-==========
-Output obfuscated.
-
-Tell me about Rocket Kitten.
-    >./CSIntel.py --actor rocketkitten
-    ...
-
-Get all intel data that has been updated in the last 24 hours and print all indicators returned
-    >./CSIntel.py --day --out indicators
-    hash_md5:XXXXXXXXXXXXXXXXXXXXXXXXXX:Malware/njRAT:MaliciousConfidence/High:
-     ...
-
-Having found an interesting IP address, search CrowdStrike's API for it and return if any threat
-actors have been associated with it.
-    >./CSIntel.py --ip XXX.XXX.XXX.XXX --out actors
-    WETPANDA
-
-Search the same IP address to see if it has been discussed in any Intelligence Reports.
-    >./CSIntel.py --ip XXX.XXX.XXX.XXX --out reports
-    CSIR-13017
-    CSIT-13051
-
-Search a specified report and print all hashes associated with it
-    >./CSIntel.py  --report CSIR-13017 --out hashes
-    XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-    ...
-
-
-
--------------------------------------------------------------------------------------------------------
-written by: adam.hogan@crowdstrike.com
-
-------------------------------------------------------------------------------------------------------
-"""
-
 import requests
 try:        # python3
     from configparser import SafeConfigParser
@@ -168,16 +16,22 @@ try:        # python3
 except Exception:     # python2
     import urllib
 
+from collections import Counter
+
 
 # Global
 CSconfigSection = "CrowdStrikeIntelAPI"
-host = "https://intelapi.crowdstrike.com/indicator/v2/search/"
+#host = "https://intelapi.crowdstrike.com/indicator/v2/search/"
+host = "https://intelapi.crowdstrike.com/"
+indicatorPath = "indicator/v2/search/"
+malqueryPath = "malquery/"
+reportsPath = "reports/"
 defaultConfigFileName = os.path.join(os.path.expanduser("~"), ".csintel.ini")
 
 # setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = '0.8'
+__version__ = '0.9beta'
 
 # I should do more with this....
 # These specs from the API documentation should be used to do more input validation
@@ -269,6 +123,9 @@ class CSIntelAPI:
         # pull some global settings for object reference
         self.configSection = CSconfigSection  # config file section title
         self.host = host                      # hostname of where to query API
+        self.indicatorPath = indicatorPath
+        self.malqueryPath = malqueryPath
+        self.reportsPath = reportsPath
         self.perpage = perpage
         self.page = page
         self.deleted = deleted
@@ -325,7 +182,8 @@ class CSIntelAPI:
         return headers
     # end getHeaders
 
-    def request(self, query):
+    #def request(self, query):
+    def request(self, query, queryType="indicator"):
         """
         This function was intended as an internal method - it just takes the query
         you pass it and sends it to the API along with your API ID & Key. If you
@@ -336,9 +194,22 @@ class CSIntelAPI:
         if not self.custid or not self.custkey:
             raise Exception('Customer ID and Customer Key are required')
 
-        fullQuery = self.host + query   
+        fullQuery = self.host
 
-        if self.debug:
+        #Host + Intel API type (e.g. indicator, malquery)
+        if queryType == "indicator":
+            fullQuery += self.indicatorPath
+        elif queryType == "reports":
+            fullQuery += self.reportsPath
+        elif queryType == "malquery":
+            fullQuery += self.malqueryPath
+
+        #TODO else error checking
+
+        #Specific query
+        fullQuery += query   
+
+        if self.debug:                  # Show the full query URL in debug
             print("fullQuery: " + fullQuery)
 
         headers = self.getHeaders()     # format the API key & ID
@@ -892,6 +763,63 @@ class CSIntelAPI:
         return result
     # end SearchIPType()
 
+    def GetMQDownloadQuery(self, filehash, **kwargs):
+        #Model query:
+        #GET https://intelapi.crowdstrike.com/malquery/download/v1/<filehash>
+
+        #TODO error checking on filehash
+
+        # build the query string
+        query = "download/v1/" + filehash
+
+        return query
+    #end GetMQDownloadQuery
+
+    def MQDownloadHash(self, filehash, **kwargs): 
+        # Search malquery by file hash to download the sample
+        query = self.GetMQDownloadQuery(filehash, **kwargs)
+
+        result = self.request(query, queryType="malquery")
+        return result
+
+    # end MQDownloadHash
+
+    def GetReportId(self, report):
+        #/reports/queries/reports/v1?name=CSIT-18178
+        query = "queries/reports/v1?name=" + report
+
+        searchResult= self.request(query, queryType="reports")
+
+        data = json.loads(searchResult.text)
+        ids = data['resources'][0] #TODO could return more than one...
+
+        return ids
+
+    def GetReportDownloadJSONQuery(self, report):
+        #entities/reports/v1?ids=40535
+        reportId = self.GetReportId(report)
+        query = "entities/reports/v1?ids=" + reportId
+        return query
+
+    def GetReportDownloadPDFQuery(self, report):
+        #entities/report-files/v1?ids=40535
+        reportId = self.GetReportId(report)
+        query = "entities/report-files/v1?ids=" + reportId
+        return query
+
+    def GetReportJSON(self, report, **kwargs):
+        reportId = self.GetReportId(report)
+        query = self.GetReportDownloadJSONQuery(reportId, **kwargs)
+
+        result = self.request(query, queryType="reports")
+        return result
+
+    def GetReportPDF(self, report, **kwargs):
+        query = self.GetReportDownloadPDFQuery(report, **kwargs)
+
+        result = self.request(query, queryType="reports")
+        return result
+
 # ===================================
 # Output
 # ===================================
@@ -1146,8 +1074,15 @@ if __name__ == "__main__":
     cmdGroup.add_argument('--emailtype', type=str, help="Search by email address type", default=None)
     cmdGroup.add_argument('--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument('--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
+    cmdGroup.add_argument('--download', '-f', type=str, help="Download a file by hash from Malquery", default=None)
+    cmdGroup.add_argument('--downloadReport', '-R', type=str, help="Download a report, e.g. CSIT-XXXX", default=None)
+    cmdGroup.add_argument('--downloadReportFiles', '-F', type=str, help="Download files associated with a report name, e.g. CSIT-XXXX", default=None)
+
 
     parser.add_argument('--out', '-o', choices=['all', 'indicators', 'hashes', 'domains', 'ips', 'actors', 'reports', 'IfReport'], help="What should I print? Default: all", default='all')
+    parser.add_argument('--count', choices=['actors'], help="Tally count totals by variable stipulated here.", default=None)
+    #TODO Mutually exclusive group ^^
+
     parser.add_argument('--related', action='store_true', help="Flag: Include related indicators.", default=False)
     parser.add_argument('--deleted', action='store_true', help="Include deleted indicators.", default=False)
 
@@ -1234,7 +1169,39 @@ if __name__ == "__main__":
     if args.week is not None:           # grab indicators for the last week
         result = api_obj.SearchLastWeek()
 
+    if args.download is not None:       # try to download file from MQ
+        result = api_obj.MQDownloadHash(args.download)
+        #print(result.headers.get('content-type')) #debug
+        filename = args.download    #name file the hash
+        open(filename, 'wb').write(result.content)
+        #exit
+        raise SystemExit
+
+
+    if args.downloadReport is not None:
+        result = api_obj.GetReportPDF(args.downloadReport)
+        filename = args.downloadReport + ".pdf"
+        open(filename, 'wb').write(result.content)
+        raise SystemExit
+
+
+    if args.downloadReportFiles is not None:
+        
+        result = api_obj.SearchReport(args.downloadReportFiles)
+        data = json.loads(result.text)
+        hashes = api_obj.GetHashesFromResults(data, related=args.related)
+
+        for h in hashes:
+            result = api_obj.MQDownloadHash(h)
+            filename = h
+            open(filename, 'wb').write(result.content)
+            
+        raise SystemExit
+
+
+
     # load the raw JSON into python friendly structure
+    print(result.text)
     data = json.loads(result.text)
 
     # print results
@@ -1286,6 +1253,21 @@ if __name__ == "__main__":
         for datum in data:
             if len(datum['reports']) > 0:
                 print(datum)
+    elif args.count == "actors":
+        from collections import Counter
+        actorSet = []
+        
+        for datum in data:
+            if len(datum['actors']) > 0:
+                actorSet.extend( datum['actors'] )
+            else:
+                actorSet.append( 'None' )
+
+        cActors = Counter(actorSet)
+
+        for key, value in cActors.items():
+            print(key, ",", value)
+
 
     else:
         # by default pretty print the whole JSON
