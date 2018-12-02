@@ -168,16 +168,21 @@ try:        # python3
 except Exception:     # python2
     import urllib
 
+from collections import Counter
+
 
 # Global
 CSconfigSection = "CrowdStrikeIntelAPI"
-host = "https://intelapi.crowdstrike.com/indicator/v2/search/"
+#host = "https://intelapi.crowdstrike.com/indicator/v2/search/"
+host = "https://intelapi.crowdstrike.com/"
+indicatorPath = "indicator/v2/search/"
+malqueryPath = "malquery/"
 defaultConfigFileName = os.path.join(os.path.expanduser("~"), ".csintel.ini")
 
 # setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = '0.8'
+__version__ = '0.9b'
 
 # I should do more with this....
 # These specs from the API documentation should be used to do more input validation
@@ -269,6 +274,8 @@ class CSIntelAPI:
         # pull some global settings for object reference
         self.configSection = CSconfigSection  # config file section title
         self.host = host                      # hostname of where to query API
+        self.indicatorPath = indicatorPath
+        self.malqueryPath = malqueryPath
         self.perpage = perpage
         self.page = page
         self.deleted = deleted
@@ -325,7 +332,8 @@ class CSIntelAPI:
         return headers
     # end getHeaders
 
-    def request(self, query):
+    #def request(self, query):
+    def request(self, query, queryType="indicator"):
         """
         This function was intended as an internal method - it just takes the query
         you pass it and sends it to the API along with your API ID & Key. If you
@@ -336,9 +344,20 @@ class CSIntelAPI:
         if not self.custid or not self.custkey:
             raise Exception('Customer ID and Customer Key are required')
 
-        fullQuery = self.host + query   
+        fullQuery = self.host
 
-        if self.debug:
+        #Host + Intel API type (e.g. indicator, malquery)
+        if queryType == "indicator":
+            fullQuery += self.indicatorPath
+        elif queryType == "malquery":
+            fullQuery += self.malqueryPath
+
+        #TODO else error checking
+
+        #Specific query
+        fullQuery += query   
+
+        if self.debug:                  # Show the full query URL in debug
             print("fullQuery: " + fullQuery)
 
         headers = self.getHeaders()     # format the API key & ID
@@ -892,6 +911,27 @@ class CSIntelAPI:
         return result
     # end SearchIPType()
 
+    def GetMQDownloadQuery(self, filehash, **kwargs):
+        #Model query:
+        #GET https://intelapi.crowdstrike.com/malquery/download/v1/<filehash>
+
+        #TODO error checking on filehash
+
+        # build the query string
+        query = "download/v1/" + filehash
+
+        return query
+    #end GetMQDownloadQuery
+
+    def MQDownloadHash(self, filehash, **kwargs): 
+        # Search malquery by file hash to download the sample
+        query = self.GetMQDownloadQuery(filehash, **kwargs)
+
+        result = self.request(query, queryType="malquery")
+        return result
+
+    # end MQDownloadHash
+
 # ===================================
 # Output
 # ===================================
@@ -1146,8 +1186,13 @@ if __name__ == "__main__":
     cmdGroup.add_argument('--emailtype', type=str, help="Search by email address type", default=None)
     cmdGroup.add_argument('--day', action='store_true', help="Get all indicators that have changed in 24 hours", default=None)
     cmdGroup.add_argument('--week', action='store_true', help="Get all indicators that have changed in the past week", default=None)
+    cmdGroup.add_argument('--download', type=str, help="Download a file by hash from Malquery", default=None)
+
 
     parser.add_argument('--out', '-o', choices=['all', 'indicators', 'hashes', 'domains', 'ips', 'actors', 'reports', 'IfReport'], help="What should I print? Default: all", default='all')
+    parser.add_argument('--count', choices=['actors'], help="Tally count totals by variable stipulated here.", default=None)
+    #TODO Mutually exclusive group ^^
+
     parser.add_argument('--related', action='store_true', help="Flag: Include related indicators.", default=False)
     parser.add_argument('--deleted', action='store_true', help="Include deleted indicators.", default=False)
 
@@ -1234,6 +1279,18 @@ if __name__ == "__main__":
     if args.week is not None:           # grab indicators for the last week
         result = api_obj.SearchLastWeek()
 
+    if args.download is not None:       # try to download file from MQ
+        result = api_obj.MQDownloadHash(args.download)
+
+        #print(result.headers.get('content-type')) #debug
+
+        filename = args.download    #name file the hash
+
+        open(filename, 'wb').write(result.content)
+
+        #exit
+        raise SystemExit
+
     # load the raw JSON into python friendly structure
     data = json.loads(result.text)
 
@@ -1286,6 +1343,21 @@ if __name__ == "__main__":
         for datum in data:
             if len(datum['reports']) > 0:
                 print(datum)
+    elif args.count == "actors":
+        from collections import Counter
+        actorSet = []
+        
+        for datum in data:
+            if len(datum['actors']) > 0:
+                actorSet.extend( datum['actors'] )
+            else:
+                actorSet.append( 'None' )
+
+        cActors = Counter(actorSet)
+
+        for key, value in cActors.items():
+            print(key, ",", value)
+
 
     else:
         # by default pretty print the whole JSON
