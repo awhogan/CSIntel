@@ -31,7 +31,7 @@ defaultConfigFileName = os.path.join(os.path.expanduser("~"), ".csintel.ini")
 # setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = '0.9b'
+__version__ = '0.9beta'
 
 # I should do more with this....
 # These specs from the API documentation should be used to do more input validation
