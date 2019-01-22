@@ -31,7 +31,7 @@ defaultConfigFileName = os.path.join(os.path.expanduser("~"), ".csintel.ini")
 # setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = '0.9beta'
+__version__ = '0.9beta2'
 
 # I should do more with this....
 # These specs from the API documentation should be used to do more input validation
@@ -1062,6 +1062,7 @@ if __name__ == "__main__":
     cmdGroup.add_argument('--domain', type=str, help="Search for a domain", default=None)
     cmdGroup.add_argument('--report', type=str, help="Search for a report name, e.g. CSIT-XXXX", default=None)
     cmdGroup.add_argument('--indicator', '-i', type=str, help="Search for an indicator", default=None)
+    cmdGroup.add_argument('--indicatorList', type=str, help="Give a file name of indiactors to check", default=None)
     cmdGroup.add_argument('--label', '-l', type=str, help="Search for a label", default=None)
     cmdGroup.add_argument('--target', type=str, help="Search by Targeted Industry", default=None)
     cmdGroup.add_argument('--confidence', type=str, help="Search by Malicious Confidence", default=None)
@@ -1132,6 +1133,27 @@ if __name__ == "__main__":
     if args.indicator is not None:      # generic indicator search
         result = api_obj.SearchIndicatorMatch(args.indicator)
 
+    if args.indicatorList is not None:  # Check a file of indicators
+
+        #experimental
+
+        results = []
+
+        #open file
+        with open(args.indicatorList, 'r') as f:
+            #loop through each indicator
+            for indicator in f:
+                if not indicator: continue
+                #check indicator
+                result = api_obj.SearchIndicatorMatch(indicator.rstrip())
+                data = json.loads(result.text)
+                if args.raw is False:
+                    pprint.pprint(data)
+                else:
+                    print(data)
+
+        raise SystemExit #handling data like this was unexpected...
+
     if args.label is not None:          # generic label search
         result = api_obj.SearchLabel(args.label)
 
@@ -1201,7 +1223,7 @@ if __name__ == "__main__":
 
 
     # load the raw JSON into python friendly structure
-    print(result.text)
+    # print(result.text)
     data = json.loads(result.text)
 
     # print results
