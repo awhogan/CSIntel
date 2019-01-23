@@ -26,12 +26,14 @@ host = "https://intelapi.crowdstrike.com/"
 indicatorPath = "indicator/v2/search/"
 malqueryPath = "malquery/"
 reportsPath = "reports/"
+samplesPath = "samples/entities/samples/v2"
+falconXPath = "falconx/entities/"
 defaultConfigFileName = os.path.join(os.path.expanduser("~"), ".csintel.ini")
 
 # setup
 __author__ = "Adam Hogan"
 __email__ = "adam.hogan@crowdstrike.com"
-__version__ = '0.9beta2'
+__version__ = '0.10beta'
 
 # I should do more with this....
 # These specs from the API documentation should be used to do more input validation
@@ -183,7 +185,7 @@ class CSIntelAPI:
     # end getHeaders
 
     #def request(self, query):
-    def request(self, query, queryType="indicator"):
+    def request(self, query, queryType="indicator", post=None):
         """
         This function was intended as an internal method - it just takes the query
         you pass it and sends it to the API along with your API ID & Key. If you
@@ -195,6 +197,7 @@ class CSIntelAPI:
             raise Exception('Customer ID and Customer Key are required')
 
         fullQuery = self.host
+        #TODO - Falcon X have the same host??
 
         #Host + Intel API type (e.g. indicator, malquery)
         if queryType == "indicator":
@@ -203,6 +206,8 @@ class CSIntelAPI:
             fullQuery += self.reportsPath
         elif queryType == "malquery":
             fullQuery += self.malqueryPath
+        elif queryType == "falconx":
+            fullQuery += self.falconxPath
 
         #TODO else error checking
 
@@ -216,9 +221,12 @@ class CSIntelAPI:
 
         # check for proxy information
         proxies = urllib.getproxies()
-
+        
         # use requests library to pull request
-        r = requests.get(fullQuery, headers=headers, proxies=proxies)
+        if post is not None:
+            r = requests.get(fullQuery, headers=headers, proxies=proxies)
+        else:
+            r = requests.post(fullQuery, headers=headers, proxies=proxies, data=post)
 
         # Error handling for HTTP request
 
@@ -819,6 +827,31 @@ class CSIntelAPI:
 
         result = self.request(query, queryType="reports")
         return result
+
+    def GetFXUploadFileQuery(self, submission, confidential="true", comment = "", **kwargs):
+        #POST/samples/entities/samples/v2?file_name=FILE_NAME&is_confidential=CONFIDENTIAL[&comment=COMMENT]
+        #TODO is POST different in requets library??
+        query = "file_name=" + submission + "&if_confidential=" + confidential
+        if comment is not "":
+            query += "&comment=" + comment
+
+        return query
+
+    def FXUploadFile(self, submission, **kwargs):
+        query = GetFXUploadFileQuery(submission, **kwargs)
+
+        result = self.request(query, queryType="falconx")
+
+        #grab file id? return query or SHA256?  
+
+        return result
+
+    def GetFXSubmitFileQuery(filehash, **kwargs):
+        query =  
+
+    def FXSubmitFIle(self, filehash, **kwargs):
+        query = GetFXSubmitFileQuery(filehash, **kwargs)
+
 
 # ===================================
 # Output
