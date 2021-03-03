@@ -1,6 +1,9 @@
 # CSIntel
 CrowdStrike Threat Intelligence 
 
+#EOL
+This script uses the now depreciated key based API keys. The [falconpy project](https://github.com/CrowdStrike/falconpy) has standardized the OAuth API functions.
+
 
 This file will act as a Python API for CrowdStrike's Threat Intelligence API. It was built to make it
 easy to use the Intel API. 
