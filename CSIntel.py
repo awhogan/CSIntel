@@ -130,6 +130,11 @@ class CSIntelAPI:
         self.page = page
         self.deleted = deleted
 
+        # check for proxy information
+        self.proxies = urllib.getproxies()
+        self.verify = True
+        self.cert = None
+
         # set API valid terms
         # should be used more for syntax validation.
         self.validType = validType
@@ -214,11 +219,8 @@ class CSIntelAPI:
 
         headers = self.getHeaders()     # format the API key & ID
 
-        # check for proxy information
-        proxies = urllib.getproxies()
-
         # use requests library to pull request
-        r = requests.get(fullQuery, headers=headers, proxies=proxies)
+        r = requests.get(fullQuery, headers=headers, proxies=self.proxies, verify=self.verify, cert=self.cert)
 
         # Error handling for HTTP request
 
