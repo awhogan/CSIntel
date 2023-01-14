@@ -766,10 +766,11 @@ class CSIntelAPI:
     def GetMQDownloadQuery(self, filehash, **kwargs):
         #Model query:
         #GET https://intelapi.crowdstrike.com/malquery/download/v1/<filehash>
+        
+        # validate parameters
+        if len(filehash) != 64:
+            raise Exception("Invalid file hash")
 
-        #TODO error checking on filehash
-
-        # build the query string
         query = "download/v1/" + filehash
 
         return query
